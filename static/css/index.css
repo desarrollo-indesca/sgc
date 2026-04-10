@@ -1,0 +1,11 @@
+li> a:hover{
+    font-weight: bold;
+}
+
+.card-link{
+    transition: all 0.2s ease-in-out;
+}
+
+.card-link:hover{
+    transform: scale(1.05);
+}
