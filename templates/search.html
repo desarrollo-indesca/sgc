@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <!-- Cinta de Secciones -->
+    <div class="section-list">
+        <h2>Secciones</h2>
+        <ul>
+        </ul>
+    </div>
+    <!-- Cinta de Acciones -->
+    <div class="action-list">
+        <h2>Acciones</h2>
+        <ul>
+            <li>
+                <a href="{% url 'formacion:carpeta_crear' %}" class="btn btn-primary">
+                    Crear Carpeta
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'formacion:seccion_crear' %}" class="btn btn-primary">
+                    Crear Sección
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'formacion:documento_crear' %}" class="btn btn-primary">
+                    Crear Documento
+                </a>
+            </li>
+        </ul>
+    </div>
+    <!-- Contenido Principal -->
+{% endblock %}
