@@ -1,15 +1,45 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
 
 # Create your views here.
 
 class RedirectView(View):
     def get(self, request):
-        return redirect('/list/root/')
+        return redirect('/login/')
 
 class LoginView(View):
-    pass
+    """
+    Resumen:
+    Clase que maneja el inicio de sesión.
+    
+    Atributos:
+    - Ninguno
+    
+    Métodos:
+    - get: Método que muestra el formulario de inicio de sesión.
+    - post: Método que verifica las credenciales del usuario y, si son válidas, inicia la sesión y redirige al usuario a la página principal.
+    """
+    def get(self, request):
+        if(request.user.is_authenticated):
+            return redirect('/list/')
+
+        return render(request, 'login.html')
+        
+    def post(self, request):
+        user = None
+        try:
+            login(request, 
+                username=request.POST['username'], 
+                password=request.POST['password']
+            )
+        except:
+            messages.error(request, 'Error desconocido. Credenciales incorrectas o no autorizadas.')
+            return redirect('/login')
+
+        return redirect('/list/')
 
 class FileListView(View):
     pass
