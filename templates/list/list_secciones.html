@@ -3,6 +3,19 @@
 {% block title %}Lista de Secciones{% endblock %}
 
 {% block content %}
-    <h1>Lista de Secciones</h1>
-    <p>Bienvenido a la lista de secciones.</p>
+    <div class="p-3">
+        <h1 class="text-lg text-center font-bold">Secciones</h1>
+
+        <hr>
+
+        <ol>
+            {% for seccion in secciones %}
+                <li class="text-primary">
+                    {{ forloop.counter}}. <a href="#">{{ seccion }}</a>
+
+                    <hr>
+                </li>
+            {% endfor %}
+        </ol>
+    </div>
 {% endblock %}

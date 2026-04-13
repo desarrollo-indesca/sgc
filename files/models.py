@@ -5,7 +5,7 @@ from django.db import models
 class Seccion(models.Model):
     nombre = models.CharField(max_length=255)
     def __str__(self):
-        return self.name
+        return self.nombre
     
 class Carpeta(models.Model):
     nombre = models.CharField(max_length=255)
@@ -13,7 +13,7 @@ class Carpeta(models.Model):
     seccion = models.ForeignKey(Seccion, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
-        return self.name
+        return self.nombre
     
 class Archivo(models.Model):
     nombre = models.CharField(max_length=255)
@@ -23,7 +23,7 @@ class Archivo(models.Model):
     estado = models.CharField(max_length=1, default='P') # 'P' Publicado, 'B' Borrador, 'E' Eliminado 
 
     def __str__(self):
-        return self.name
+        return self.nombre
     
 class Registro(models.Model):
     archivo = models.ForeignKey(Archivo, on_delete=models.CASCADE, related_name='registros', null=True, blank=True)

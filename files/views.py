@@ -5,6 +5,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth import get_user_model
 from django.contrib import messages
 
+from .models import Seccion, Archivo, Carpeta
+
 # Create your views here.
 
 class RedirectView(View):
@@ -47,7 +49,9 @@ class LoginView(View):
 
 class SeccionListView(LoginRequiredMixin, View):
     def get(self, request):
-        return render(request, 'list/list_secciones.html')
+        return render(request, 'list/list_secciones.html', {
+            'secciones': Seccion.objects.all(),
+        })
     
 class LogoutView(LoginRequiredMixin, View):
     def get(self, request):
