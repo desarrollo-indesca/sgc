@@ -11,7 +11,7 @@
         <ol>
             {% for seccion in secciones %}
                 <li class="text-primary">
-                    {{ forloop.counter}}. <a href="#">{{ seccion }}</a>
+                    {{ forloop.counter}}. <a href="{% url 'list_files' seccion.pk  %}">{{ seccion }}</a>
 
                     <hr>
                 </li>

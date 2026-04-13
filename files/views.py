@@ -58,8 +58,24 @@ class LogoutView(LoginRequiredMixin, View):
         logout(request)
         return redirect('/login/')
 
-class FileListView(View):
-    pass
+class SeccionCarpetaListView(LoginRequiredMixin, View):
+    def get(self, request, seccion):
+        return render(request, 'list/list.html', {
+            'carpetas': Carpeta.objects.filter(seccion__pk=seccion),
+            'seccion': Seccion.objects.get(pk=seccion),
+        })
+    
+    def post(self, request, seccion):
+            nombre_carpeta = request.POST.get('nombre-carpeta')
+            nombre_archivo = request.POST.get('nombre-archivo')
+
+            if(nombre_carpeta):
+                Carpeta.objects.create(
+                    nombre=nombre_carpeta,
+                    seccion=Seccion.objects.get(pk=seccion),
+                    # TODO: Agregar carpeta padre
+                )
+                return redirect(f'/list/{seccion}/')
 
 class FileUploadView(LoginRequiredMixin, View):
     pass
