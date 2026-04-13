@@ -37,8 +37,6 @@ class LoginView(View):
                 password = request.POST.get('password')
             )
 
-            print(user)
-
             login(request, user)
         except Exception as ex:
             print(str(ex))
@@ -46,6 +44,15 @@ class LoginView(View):
             return redirect('/login')
 
         return redirect('/list/')
+
+class SeccionListView(LoginRequiredMixin, View):
+    def get(self, request):
+        return render(request, 'list/list_secciones.html')
+    
+class LogoutView(LoginRequiredMixin, View):
+    def get(self, request):
+        logout(request)
+        return redirect('/login/')
 
 class FileListView(View):
     pass

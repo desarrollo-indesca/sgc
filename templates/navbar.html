@@ -41,6 +41,21 @@
       </div>
       {% endif %}
   </div>
+
+  <div class="navbar-second-row flex items-center justify-between">
+      <div class="navbar-links flex items-center space-x-8">
+        {% if request.user.is_superuser %}
+          <a href="#" class="navbar-link">+ Nueva Carpeta</a>
+          <a href="#" class="navbar-link">+ Nuevo Archivo</a>
+          <a href="#" class="navbar-link">+ Nueva Sección</a>
+        {% endif %}
+      </div>
+      <div class="navbar-actions flex items-center space-x-8">
+        {% if request.user.is_superuser %}
+          <a href="#" class="navbar-link">Crear Usuario Temporal</a>
+        {% endif %}
+      </div>
+  </div>
 </nav>
 
 <script>
