@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import get_user_model
 from django.contrib import messages
 
 # Create your views here.
@@ -29,13 +30,18 @@ class LoginView(View):
         return render(request, 'login.html')
         
     def post(self, request):
-        user = None
         try:
-            login(request, 
-                username=request.POST['username'], 
-                password=request.POST['password']
+            user = authenticate(
+                request,
+                username = request.POST.get('username'),
+                password = request.POST.get('password')
             )
-        except:
+
+            print(user)
+
+            login(request, user)
+        except Exception as ex:
+            print(str(ex))
             messages.error(request, 'Error desconocido. Credenciales incorrectas o no autorizadas.')
             return redirect('/login')
 
