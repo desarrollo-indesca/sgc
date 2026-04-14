@@ -5,11 +5,47 @@
 
 {% block content %}
     <div class="p-3">
-        {{seccion.nombre}}
+        <h1 class="text-center text-3xl font-bold">
+            {{seccion.nombre}}
+        </h1>
         <hr>
 
-        <table>
-
+        <table class="table-xs w-full border-collapse border border-gray-300">
+            <thead class="bg-gray-900 text-white">
+                <tr>
+                    <th>Tipo</th>
+                    <th>Nombre</th>
+                    <th>Fecha de Carga</th>
+                    <th>Cargado por</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for carpeta in carpetas %}
+                    <tr class="hover:bg-gray-100 text-center">
+                        <td>
+                            <div class="flex justify-center">
+                                <img src="/static/img/folder.svg" width="25" height="25" alt="Carpeta">
+                            </div>
+                        </td>
+                        <td style="text-align: center;">
+                            <a href="#" class="hover:underline">{{carpeta.nombre}}</a>
+                        </td>
+                        <td>{{carpeta.fecha_de_carga}}</td>
+                        <td>{{carpeta.creado_por.get_full_name}}</td>
+                        <td>
+                            <div class="flex justify-center">
+                                <a href="#" class="btn btn-sm btn-primary">
+                                    <img src="{% static 'img/edit.svg' %}" width="25" height="25" alt="Editar">
+                                </a> &nbsp;
+                                <a href="#" class="btn btn-sm btn-error">
+                                    <img src="{% static 'img/delete.png' %}" width="25" height="25" alt="Eliminar">
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
         </table>
     </div>
 {% endblock %}
