@@ -1,4 +1,5 @@
 {% load static %}
+{% load widget_tweaks %}
 <!DOCTYPE html>
 <html lang="es" data-theme="light">
 <head>
@@ -44,5 +45,34 @@
     
     {% block js %}
     {% endblock %}
+
+    {% if request.user.is_authenticated and request.user.is_superuser %}
+    <div class="modal" id="creacion-carpeta">
+        <div class="modal-overlay" onclick="closeModal('creacion-carpeta')"></div>
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 class="modal-title">Creación de Carpeta</h2>
+                <button class="modal-close-btn" onclick="closeModal('creacion-carpeta')">x</button>
+            </div>
+            <div class="modal-body">
+            <form action="/" method="post">
+                {% csrf_token %}
+                {{formulario_carpeta.nombre}}
+                <button type="submit" class="btn btn-primary">Crear Carpeta</button>
+            </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openModal(which) {
+            document.getElementById(which).classList.remove("hidden");
+        }
+
+        function closeModal(which) {
+            document.getElementById(which).classList.add("hidden");
+        }
+    </script>
+    {% endif %}
 </body>
 </html>
