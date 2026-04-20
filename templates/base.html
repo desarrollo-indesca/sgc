@@ -47,32 +47,29 @@
     {% endblock %}
 
     {% if request.user.is_authenticated and request.user.is_superuser %}
-    <div class="modal" id="creacion-carpeta">
-        <div class="modal-overlay" onclick="closeModal('creacion-carpeta')"></div>
-        <div class="modal-container">
-            <div class="modal-header">
-                <h2 class="modal-title">Creación de Carpeta</h2>
-                <button class="modal-close-btn" onclick="closeModal('creacion-carpeta')">x</button>
+    <input type="checkbox" id="creacion-carpeta" class="modal-toggle" />
+        <div class="modal" id="creacion-carpeta" role="dialog">
+            <div class="modal-box p-5">
+                <h3 class="font-bold text-lg text-center">Creación de Carpeta</h3>
+                <hr>
+                <form action="" method="post">
+                    <div class="w-full">
+                        {% csrf_token %}
+                        <div class="form-control w-full">
+                            <label class="label">
+                                <span class="label-text">Nombre de la Carpeta</span>
+                            </label>
+                            {% render_field form_carpeta.nombre class="input input-bordered w-full" %}
+                        </div>
+                    </div>
+
+                    <div class="modal-action flex justify-center">
+                        <button type="submit" class="btn btn-error">Crear Carpeta</button>
+                    </div>
+                </form>
             </div>
-            <div class="modal-body">
-            <form action="/" method="post">
-                {% csrf_token %}
-                {{formulario_carpeta.nombre}}
-                <button type="submit" class="btn btn-primary">Crear Carpeta</button>
-            </form>
-            </div>
+            <label class="modal-backdrop" for="creacion-carpeta">Close</label>
         </div>
-    </div>
-
-    <script>
-        function openModal(which) {
-            document.getElementById(which).classList.remove("hidden");
-        }
-
-        function closeModal(which) {
-            document.getElementById(which).classList.add("hidden");
-        }
-    </script>
     {% endif %}
 </body>
 </html>

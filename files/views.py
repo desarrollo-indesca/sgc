@@ -4,8 +4,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth import get_user_model
 from django.contrib import messages
+from django.db import transaction
 
-from .models import Seccion, Archivo, Carpeta
+from .models import Seccion, Archivo, Carpeta, Registro
+from .forms import *
 
 # Create your views here.
 
@@ -63,18 +65,35 @@ class SeccionCarpetaListView(LoginRequiredMixin, View):
         return render(request, 'list/list.html', {
             'carpetas': Carpeta.objects.filter(seccion__pk=seccion),
             'seccion': Seccion.objects.get(pk=seccion),
+            'form_carpeta': CrearCarpetaForm(prefix='carpeta'),
         })
     
     def post(self, request, seccion):
-            nombre_carpeta = request.POST.get('nombre-carpeta')
-            nombre_archivo = request.POST.get('nombre-archivo')
+            nombre_carpeta = request.POST.get('carpeta-nombre')
+            nombre_archivo = request.POST.get('archivo-nombre')
 
             if(nombre_carpeta):
-                Carpeta.objects.create(
-                    nombre=nombre_carpeta,
-                    seccion=Seccion.objects.get(pk=seccion),
-                    # TODO: Agregar carpeta padre
-                )
+                form_carpeta = CrearCarpetaForm(request.POST, prefix='carpeta')
+
+                with transaction.atomic():
+                    if form_carpeta.is_valid():
+                        form_carpeta.instance.seccion = Seccion.objects.get(pk=seccion)
+                        form_carpeta.save()
+
+                        Registro.objects.create(
+                            carpeta = form_carpeta.instance,
+                            accion = "C",
+                            usuario = request.user,
+                            descripcion = f"Creación de la carpeta {form_carpeta.instance.nombre} en la sección {form_carpeta.instance.seccion}"
+                        )                        
+
+                        return redirect(f'/list/{seccion}/')
+                    else:
+                        messages.error(request, 'Error al crear la carpeta.')
+                        print(form_carpeta.errors)
+                        return redirect(f'/list/{seccion}/')
+                
+                messages.error(request, 'Error al crear la carpeta.')
                 return redirect(f'/list/{seccion}/')
 
 class FileUploadView(LoginRequiredMixin, View):
