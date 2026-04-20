@@ -46,10 +46,11 @@
   <div class="navbar-second-row flex items-center justify-between">
     
       <div class="navbar-links flex items-center space-x-8">
+        &nbsp;
         {% if request.user.is_superuser %}
           <label for="creacion-carpeta" class="btn btn-sm btn-gray-600"> + Nueva Carpeta </label>
           {% if not no_crear_archivo %}
-          <label for="creacion-archivo" class="btn btn-sm btn-gray-600"> + Nueva Carpeta </label>
+          <label for="creacion-archivo" class="btn btn-sm btn-gray-600"> + Nuevo Archivo </label>
           {% endif %}
         {% endif %}
       </div>

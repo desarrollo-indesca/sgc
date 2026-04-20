@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load widget_tweaks %}
 
 {% block title %}Lista de Secciones{% endblock %}
 
@@ -35,12 +36,43 @@
                         <td>{{carpeta.creado_por.get_full_name}}</td>
                         <td>
                             <div class="flex justify-center">
-                                <a href="#" class="btn btn-sm btn-primary">
-                                    <img src="{% static 'img/edit.svg' %}" width="25" height="25" alt="Editar">
-                                </a> &nbsp;
-                                <a href="#" class="btn btn-sm btn-error">
-                                    <img src="{% static 'img/delete.png' %}" width="25" height="25" alt="Eliminar">
-                                </a>
+                                <label for="edit-{{carpeta.pk}}" class="btn btn-sm btn-gray-600">
+                                    <img src="{% static 'img/edit.svg' %}" width="25" height="25" alt="Eliminar">
+                                </label>
+                                <input type="checkbox" id="edit-{{carpeta.pk}}" class="modal-toggle" />
+                                <div class="modal" id="edit-{{carpeta.pk}}" role="dialog">
+                                    <div class="modal-box p-5">
+                                        <h3 class="font-bold text-lg text-center">Edición de Carpeta</h3>
+                                        <hr>
+                                        <form action="" method="post">
+                                            <div class="w-full">
+                                                {% csrf_token %}
+                                                <div class="form-control w-full">
+                                                    <label class="label">
+                                                        <span class="label-text">Nombre de la Carpeta</span>
+                                                    </label>
+                                                    <input type="text" class="input input-bordered" name="carpeta-nombre" value="{{carpeta.nombre}}">
+                                                    <input type="text" name="editar" value="{{carpeta.pk}}" hidden>
+                                                </div>
+                                            </div>
+
+                                            <div class="modal-action flex justify-center">
+                                                <button type="submit" class="btn btn-error">Editar Carpeta</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <label class="modal-backdrop" for="edit-{{carpeta.pk}}">Close</label>
+                                </div>
+                                                        &nbsp;
+                                {% if carpeta.carpeta_vacia %}
+                                <form action="" method="post" onsubmit="return confirm('¿Desea eliminar esta carpeta?')">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="eliminar" value="{{carpeta.pk}}">
+                                    <button type="submit" class="btn btn-sm btn-error">
+                                        <img src="{% static 'img/delete.png' %}" width="25" height="25" alt="Eliminar">
+                                    </button>
+                                </form>
+                                {% endif %}
                             </div>
                         </td>
                     </tr>

@@ -63,38 +63,75 @@ class LogoutView(LoginRequiredMixin, View):
 class SeccionCarpetaListView(LoginRequiredMixin, View):
     def get(self, request, seccion):
         return render(request, 'list/list.html', {
-            'carpetas': Carpeta.objects.filter(seccion__pk=seccion),
+            'carpetas': Carpeta.objects.filter(seccion__pk=seccion, activo=True),
             'seccion': Seccion.objects.get(pk=seccion),
             'form_carpeta': CrearCarpetaForm(prefix='carpeta'),
-            'no_crear_archivo': True
         })
     
     def post(self, request, seccion):
             nombre_carpeta = request.POST.get('carpeta-nombre')
+            eliminar = request.POST.get('eliminar')
+            editar = request.POST.get('editar')
 
-            if(nombre_carpeta):
-                form_carpeta = CrearCarpetaForm(request.POST, prefix='carpeta')
+            with transaction.atomic():
+                if(nombre_carpeta and not editar):
+                    form_carpeta = CrearCarpetaForm(request.POST, prefix='carpeta')
+                    
+                    try:
+                        if form_carpeta.is_valid():
+                                form_carpeta.instance.seccion = Seccion.objects.get(pk=seccion)
+                                form_carpeta.save()
 
-                with transaction.atomic():
-                    if form_carpeta.is_valid():
-                        form_carpeta.instance.seccion = Seccion.objects.get(pk=seccion)
-                        form_carpeta.save()
+                                Registro.objects.create(
+                                    carpeta = form_carpeta.instance,
+                                    accion = "C",
+                                    usuario = request.user,
+                                    descripcion = f"Creación de la carpeta {form_carpeta.instance.nombre} en la sección {form_carpeta.instance.seccion}"
+                                )
 
-                        Registro.objects.create(
-                            carpeta = form_carpeta.instance,
-                            accion = "C",
-                            usuario = request.user,
-                            descripcion = f"Creación de la carpeta {form_carpeta.instance.nombre} en la sección {form_carpeta.instance.seccion}"
-                        )                        
-
+                                messages.success(request, 'Carpeta creada.')
+                                return redirect(f'/list/{seccion}/')
+                        else:
+                                messages.error(request, 'Error al crear la carpeta.')
+                                print(form_carpeta.errors)
+                                return redirect(f'/list/{seccion}/')
+                    except Exception as ex:
+                        messages.error(request, f'Error al crear la carpeta: {str(ex)}')
                         return redirect(f'/list/{seccion}/')
-                    else:
-                        messages.error(request, 'Error al crear la carpeta.')
-                        print(form_carpeta.errors)
+                elif(eliminar):
+                    carpeta = Carpeta.objects.get(pk=eliminar)
+                    carpeta.activo = False
+                    carpeta.save()
+
+                    Registro.objects.create(
+                        carpeta = carpeta,
+                        accion = "E",
+                        usuario = request.user,
+                        descripcion = f"Eliminación de la carpeta {carpeta.nombre} en la sección {carpeta.seccion}"
+                    )
+
+                    messages.success(request, 'Carpeta eliminada.')
+                    return redirect(f'/list/{seccion}/')
+                elif(editar):
+                    carpeta = Carpeta.objects.get(pk=editar)
+                    name_old = carpeta.nombre
+                    
+                    try:
+                            carpeta.nombre = request.POST.get('carpeta-nombre')
+                            carpeta.save()
+
+                            Registro.objects.create(
+                                carpeta = carpeta,
+                                accion = "U",
+                                usuario = request.user,
+                                descripcion = f"Edición de la carpeta {name_old} a {carpeta.nombre} en la sección {carpeta.seccion}"
+                            )              
+
+                            messages.success(request, 'Carpeta editada.')
+                            return redirect(f'/list/{seccion}/')
+                    except Exception as ex:
+                        messages.error(request, f'Error al crear la carpeta: {str(ex)}')
                         return redirect(f'/list/{seccion}/')
-                
-                messages.error(request, 'Error al crear la carpeta.')
-                return redirect(f'/list/{seccion}/')
 
 class FileUploadView(LoginRequiredMixin, View):
     pass

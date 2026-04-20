@@ -11,6 +11,7 @@ class Carpeta(models.Model):
     nombre = models.CharField(max_length=255)
     carpeta = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='carpetas')
     seccion = models.ForeignKey(Seccion, on_delete=models.SET_NULL, null=True, blank=True)
+    activo = models.BooleanField(default=True)
 
     def __str__(self):
         return self.nombre
@@ -21,12 +22,16 @@ class Carpeta(models.Model):
     def creado_por(self):
         return self.registros.get(accion='C').usuario if self.registros.filter(accion='C').exists() else None
     
+    def carpeta_vacia(self):
+        return self.archivos.count() == 0 and self.carpetas.count() == 0
+    
 class Archivo(models.Model):
     nombre = models.CharField(max_length=255)
     direccion = models.FileField(upload_to='archivos/')
     carpeta = models.ForeignKey(Carpeta, on_delete=models.CASCADE, related_name='archivos')
     version_siguiente = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='versiones_anteriores')
     estado = models.CharField(max_length=1, default='P') # 'P' Publicado, 'B' Borrador, 'E' Eliminado 
+    seccion = models.ForeignKey(Seccion, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.nombre
