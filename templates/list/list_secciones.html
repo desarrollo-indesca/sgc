@@ -85,7 +85,7 @@
         /* Support Section: 9 in a row with spacing */
         .support-grid {
             display: grid;
-            grid-template-columns: repeat(9, 1fr);
+            grid-template-columns: repeat(11, 1fr);
             gap: 15px; /* Spacing between yellow buttons */
             width: 100%;
         }
@@ -125,7 +125,7 @@
             <div class="center-area row-dir">
                 <div style="display: flex; gap: 40px;">
                     <a class="btn btn-green" href="{% url 'list_files' seccion=1 %}">Dirección Estratégica y Planificación</a>
-                    <a class="btn btn-green" href="{% url 'list_files' seccion=2 %}">Gestión de la Calidad</a>
+                    <a class="btn btn-green" href="{% url 'list_files' seccion=5 %}">Gestión de la Calidad</a>
                 </div>
             </div>
             <div class="stack-col row-dir">
@@ -136,8 +136,8 @@
             </div>
             
             <div class="center-area row-med">
-                <div class="btn btn-blue" onclick="alert('Investigación, Desarrollo e Innovación')">Investigación, Desarrollo e Innovación</div>
-                <div class="btn btn-blue" onclick="alert('Servicios Especializados')">Servicios Especializados</div>
+                <div class="btn btn-blue" href="{% url 'list_files' seccion=6 %}">Investigación, Desarrollo e Innovación</div>
+                <div class="btn btn-blue" href="{% url 'list_files' seccion=7 %}">Servicios Especializados</div>
             </div>
             <div class="stack-col row-med">
             </div>
@@ -147,15 +147,17 @@
             
             <div class="center-area row-apo">
                 <div class="support-grid">
-                    <div class="btn btn-yellow" onclick="alert('Admin')">Administración y Finanzas</div>
-                    <div class="btn btn-yellow" onclick="alert('Prot. Ind')">Protección Industrial</div>
-                    <div class="btn btn-yellow" onclick="alert('G. Humana')">Gestión Humana</div>
-                    <div class="btn btn-yellow" onclick="alert('Mant')">Gestión de Mantenimiento y Servicios Generales</div>
-                    <div class="btn btn-yellow" onclick="alert('Seguridad')">Seguridad Industrial, Ambiente e Higiene Ocupacional</div>
-                    <div class="btn btn-yellow" onclick="alert('Jurídica')">Gestión Jurídica</div>
-                    <div class="btn btn-yellow" onclick="alert('TI')">Tecnología de la Información</div>
-                    <div class="btn btn-yellow" onclick="alert('Contrataciones')">Contrataciones</div>
-                    <div class="btn btn-yellow" onclick="alert('Comunicación')">Gestión Comunicacional</div>
+                    <a class="btn btn-yellow" href="{% url 'list_files' seccion=8 %}">Administración y Finanzas</a>
+                    <a class="btn btn-yellow" href="{% url 'list_files' seccion=9 %}">Gestión Humana</a>
+                    <a class="btn btn-yellow" href="{% url 'list_files' seccion=10 %}">Protección Física</a>
+                    <a class="btn btn-yellow" href="{% url 'list_files' seccion=11 %}">Servicios Logísticos</a>
+                    <a class="btn btn-yellow" href="{% url 'list_files' seccion=12 %}">Servicios Médicos</a>
+                    <a class="btn btn-yellow" href="{% url 'list_files' seccion=13 %}">Seguridad Industrial, Ambiente e Higiene Ocupacional</a>
+                    <a class="btn btn-yellow" href="{% url 'list_files' seccion=14 %}">Gestión de Mantenimiento e Infraestructura</a>
+                    <a class="btn btn-yellow" href="{% url 'list_files' seccion=15 %}">Gestión Jurídica</a>
+                    <a class="btn btn-yellow" href="{% url 'list_files' seccion=16 %}">Tecnología de la Información</a>
+                    <a class="btn btn-yellow" href="{% url 'list_files' seccion=17 %}">Contrataciones</a>
+                    <a class="btn btn-yellow" href="{% url 'list_files' seccion=18 %}">Gestión Comunicacional</a>
                 </div>
             </div>
 
