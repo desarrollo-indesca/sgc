@@ -47,4 +47,4 @@ class Registro(models.Model):
     descripcion = models.TextField(null=True, blank=True)
 
     def __str__(self):
-        return f"Cambio en {self.archivo.nombre} por {self.usuario} el {self.fecha}"
+        return f"Cambio en {self.archivo.nombre if self.archivo else self.carpeta.nombre} por {self.usuario} el {self.fecha}"

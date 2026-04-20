@@ -66,11 +66,11 @@ class SeccionCarpetaListView(LoginRequiredMixin, View):
             'carpetas': Carpeta.objects.filter(seccion__pk=seccion),
             'seccion': Seccion.objects.get(pk=seccion),
             'form_carpeta': CrearCarpetaForm(prefix='carpeta'),
+            'no_crear_archivo': True
         })
     
     def post(self, request, seccion):
             nombre_carpeta = request.POST.get('carpeta-nombre')
-            nombre_archivo = request.POST.get('archivo-nombre')
 
             if(nombre_carpeta):
                 form_carpeta = CrearCarpetaForm(request.POST, prefix='carpeta')

@@ -70,6 +70,30 @@
             </div>
             <label class="modal-backdrop" for="creacion-carpeta">Close</label>
         </div>
+
+    <input type="checkbox" id="creacion-archivo" class="modal-toggle" />
+        <div class="modal" id="creacion-archivo" role="dialog">
+            <div class="modal-box p-5">
+                <h3 class="font-bold text-lg text-center">Creación de Archivo</h3>
+                <hr>
+                <form action="" method="post">
+                    <div class="w-full">
+                        {% csrf_token %}
+                        <div class="form-control w-full">
+                            <label class="label">
+                                <span class="label-text">Nombre de la Archivo</span>
+                            </label>
+                            {% render_field form_archivo.nombre class="input input-bordered w-full" %}
+                        </div>
+                    </div>
+
+                    <div class="modal-action flex justify-center">
+                        <button type="submit" class="btn btn-error">Crear Archivo</button>
+                    </div>
+                </form>
+            </div>
+            <label class="modal-backdrop" for="creacion-archivo">Close</label>
+        </div>
     {% endif %}
 </body>
 </html>

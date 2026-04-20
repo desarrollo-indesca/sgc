@@ -48,7 +48,9 @@
       <div class="navbar-links flex items-center space-x-8">
         {% if request.user.is_superuser %}
           <label for="creacion-carpeta" class="btn btn-sm btn-gray-600"> + Nueva Carpeta </label>
-          <a href="#" class="navbar-link">+ Nuevo Archivo</a>
+          {% if not no_crear_archivo %}
+          <label for="creacion-archivo" class="btn btn-sm btn-gray-600"> + Nueva Carpeta </label>
+          {% endif %}
         {% endif %}
       </div>
       <div class="navbar-actions flex items-center space-x-8">
