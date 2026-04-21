@@ -81,9 +81,10 @@
                         {% csrf_token %}
                         <div class="form-control w-full">
                             <label class="label">
-                                <span class="label-text">Nombre del Archivo</span>
+                                <span class="label-text">Archivo a Cargar:</span>
                             </label>
-                            {% render_field form_archivo.nombre class="input input-bordered w-full" %}
+                            <input type="hidden" name="seccion" value="1">
+                            {% render_field form_archivo.direccion class="input input-bordered w-full" %}
                         </div>
                     </div>
 

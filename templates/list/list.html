@@ -22,11 +22,16 @@
                 </tr>
             </thead>
             <tbody>
-                {% for carpeta in carpetas %}
+                {% if not carpetas and not archivos %}
+                    <tr>
+                        <td colspan="5" class="text-center">No hay carpetas ni archivos para mostrar.</td>
+                    </tr>
+                {% else %}
+                    {% for carpeta in carpetas %}
                     <tr class="hover:bg-gray-100 text-center">
-                        <td>
-                            <div class="flex justify-center">
-                                <img src="/static/img/folder.svg" width="25" height="25" alt="Carpeta">
+                            <td>
+                                <div class="flex justify-center">
+                                    <img src="/static/img/folder.svg" width="25" height="25" alt="Carpeta">
                             </div>
                         </td>
                         <td style="text-align: center;">
@@ -76,7 +81,69 @@
                             </div>
                         </td>
                     </tr>
-                {% endfor %}
+                    {% endfor %}
+
+                    {% for archivo in archivos %}
+                    <tr class="hover:bg-gray-100 text-center">
+                            <td>
+                                {% if '.pdf' in archivo.nombre %}
+                                    <img src="{% static 'img/pdf.svg' %}" width="25" height="25" alt="PDF">
+                                {% elif '.doc' in archivo.nombre or '.docx' in archivo.nombre %}
+                                    <img src="{% static 'img/docx.png' %}" width="25" height="25" alt="Documento">
+                                {% elif '.xls' in archivo.nombre or '.xlsx' in archivo.nombre %}
+                                    <img src="{% static 'img/xlsx.png' %}" width="25" height="25" alt="Excel">
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td style="text-align: center;">
+                            <a href="#" class="hover:underline">{{archivo.nombre}}</a>
+                        </td>
+                        <td>{{archivo.fecha_de_carga}}</td>
+                        <td>{{archivo.creado_por.get_full_name}}</td>
+                        <td>
+                            <div class="flex justify-center">
+                                <label for="edit-{{carpeta.pk}}" class="btn btn-sm btn-gray-600">
+                                    <img src="{% static 'img/edit.svg' %}" width="25" height="25" alt="Eliminar">
+                                </label>
+                                <input type="checkbox" id="edit-{{carpeta.pk}}" class="modal-toggle" />
+                                <div class="modal" id="edit-{{carpeta.pk}}" role="dialog">
+                                    <div class="modal-box p-5">
+                                        <h3 class="font-bold text-lg text-center">Actualizacion de Archivo</h3>
+                                        <hr>
+                                        <form action="" method="post">
+                                            <div class="w-full">
+                                                {% csrf_token %}
+                                                <div class="form-control w-full">
+                                                    <label class="label">
+                                                        <span class="label-text">Nombre de la Carpeta</span>
+                                                    </label>
+                                                    <input type="text" class="input input-bordered" name="carpeta-nombre" value="{{carpeta.nombre}}">
+                                                    <input type="text" name="editar" value="{{carpeta.pk}}" hidden>
+                                                </div>
+                                            </div>
+
+                                            <div class="modal-action flex justify-center">
+                                                <button type="submit" class="btn btn-error">Editar Carpeta</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <label class="modal-backdrop" for="edit-{{carpeta.pk}}">Close</label>
+                                </div>
+                                                        &nbsp;
+                                {% if carpeta.carpeta_vacia %}
+                                <form action="" method="post" onsubmit="return confirm('¿Desea eliminar esta carpeta?')">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="eliminar" value="{{carpeta.pk}}">
+                                    <button type="submit" class="btn btn-sm btn-error">
+                                        <img src="{% static 'img/delete.png' %}" width="25" height="25" alt="Eliminar">
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% endif %}
             </tbody>
         </table>
     </div>
