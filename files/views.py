@@ -75,9 +75,12 @@ class SeccionCarpetaListView(LoginRequiredMixin, View):
             eliminar = request.POST.get('eliminar')
             editar = request.POST.get('editar')
 
+            print(archivo)
+
             with transaction.atomic():
                 if(archivo):
-                    form_archivo = CrearArchivoForm(request.POST, prefix='archivo')
+                    form_archivo = CrearArchivoForm(request.POST, request.FILES, prefix='archivo')
+                    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAA")
                     
                     try:
                         if form_archivo.is_valid():
@@ -88,17 +91,17 @@ class SeccionCarpetaListView(LoginRequiredMixin, View):
                                     archivo = form_archivo.instance,
                                     accion = "C",
                                     usuario = request.user,
-                                    descripcion = f"Creación de la carpeta {form_carpeta.instance.nombre} en la sección {form_carpeta.instance.seccion}"
+                                    descripcion = f"Creación del archivo {form_archivo.instance.nombre} en la sección {form_archivo.instance.seccion}"
                                 )
 
-                                messages.success(request, 'Carpeta creada.')
+                                messages.success(request, 'Archivo creado.')
                                 return redirect(f'/list/{seccion}/')
                         else:
-                                messages.error(request, 'Error al crear la carpeta.')
-                                print(form_carpeta.errors)
+                                messages.error(request, f'Error al crear el archivo: {form_archivo.errors}')
+                                print(form_archivo.errors)
                                 return redirect(f'/list/{seccion}/')
                     except Exception as ex:
-                        messages.error(request, f'Error al crear la carpeta: {str(ex)}')
+                        messages.error(request, f'Error al crear el archivo: {str(ex)}')
                         return redirect(f'/list/{seccion}/')
                 elif(eliminar):
                     carpeta = Carpeta.objects.get(pk=eliminar)

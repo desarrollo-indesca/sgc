@@ -76,15 +76,77 @@
             <div class="modal-box p-5">
                 <h3 class="font-bold text-lg text-center">Creación de Archivo</h3>
                 <hr>
-                <form action="" method="post">
+                <form action="" method="post" enctype="multipart/form-data">
                     <div class="w-full">
                         {% csrf_token %}
                         <div class="form-control w-full">
                             <label class="label">
                                 <span class="label-text">Archivo a Cargar:</span>
                             </label>
-                            <input type="hidden" name="seccion" value="1">
-                            {% render_field form_archivo.direccion class="input input-bordered w-full" %}
+                            <input type="hidden" name="archivo" value="1">
+
+                            {% render_field form_archivo.direccion class="input input-bordered w-full" accept=".pdf, .xls, .xlsx, .doc, .docx" %}
+
+                            <label class="label">
+                                <span class="label-text">Nombre del Archivo:</span>
+                            </label>
+                            {% render_field form_archivo.nombre class="input input-bordered w-full" disabled="" %}
+
+                            {% render_field form_archivo.mantener_nombre class="checkbox checkbox-primary" checked="checked" %}
+                            <label for="id_archivo-mantener_nombre">Mentener el Nombre del Archivo</label>
+
+                            <script>
+                                const fileInput = document.getElementById('id_archivo-direccion');
+                                const nombreInput = document.getElementById('id_archivo-nombre');
+
+                                // Opcional: Asegurar que empiece deshabilitado al cargar la página
+                                if (!fileInput.value) {
+                                    nombreInput.disabled = true;
+                                }
+
+                                fileInput.addEventListener('change', function() {
+                                    if (this.files && this.files.length > 0) {
+                                        // Si hay un archivo, habilitamos el campo
+                                        nombreInput.disabled = false;
+                                    } else {
+                                        // Si no hay archivo (o canceló la selección), lo deshabilitamos
+                                        nombreInput.disabled = true;
+                                        nombreInput.value = ""; // Limpiamos el campo por seguridad
+                                    }
+                                });
+
+                                const checkbox = document.getElementById('id_archivo-mantener_nombre');
+
+                                function actualizarNombre() {
+                                    // Si el checkbox está activo, deshabilitamos el campo
+                                    if (checkbox.checked) {
+                                        nombreInput.disabled = true;
+                                        nombreInput.value = ""; // Opcional: limpiar si está desactivado
+                                    } else {
+                                        // Si no está activo, lo habilitamos
+                                        nombreInput.disabled = false;
+                                        
+                                        // Y si ya hay un archivo seleccionado, ponemos su nombre
+                                        if (fileInput.files.length > 0) {
+                                            nombreInput.value = fileInput.files[0].name;
+                                        }
+                                    }
+                                }
+
+                                // Escuchar cuando cambian el checkbox
+                                checkbox.addEventListener('change', actualizarNombre);
+
+                                // Escuchar cuando seleccionan un archivo nuevo
+                                fileInput.addEventListener('change', function() {
+                                    // Solo intentamos poner el nombre si el checkbox NO está activo
+                                    if (!checkbox.checked && this.files.length > 0) {
+                                        nombreInput.value = this.files[0].name;
+                                    }
+                                });
+
+                                // Ejecutar al cargar por si el navegador recordó estados previos
+                                actualizarNombre();
+                            </script>
                         </div>
                     </div>
 
