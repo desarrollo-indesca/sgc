@@ -91,7 +91,7 @@ class SeccionCarpetaListView(LoginRequiredMixin, View):
                                     archivo = form_archivo.instance,
                                     accion = "C",
                                     usuario = request.user,
-                                    descripcion = f"Creación del archivo {form_archivo.instance.nombre} en la sección {form_archivo.instance.seccion}"
+                                    descripcion = f"Creación del archivo {form_archivo.instance.nombre} en la sección {form_archivo.instance.seccion}",
                                 )
 
                                 messages.success(request, 'Archivo creado.')

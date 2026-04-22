@@ -28,7 +28,7 @@ class Carpeta(models.Model):
 class Archivo(models.Model):
     nombre = models.CharField(max_length=255)
     direccion = models.FileField(upload_to='archivos/')
-    carpeta = models.ForeignKey(Carpeta, on_delete=models.CASCADE, related_name='archivos')
+    carpeta = models.ForeignKey(Carpeta, on_delete=models.CASCADE, related_name='archivos', null=True, blank=True)
     version_siguiente = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='versiones_anteriores')
     estado = models.CharField(max_length=1, default='P') # 'P' Publicado, 'B' Borrador, 'E' Eliminado 
     seccion = models.ForeignKey(Seccion, on_delete=models.SET_NULL, null=True, blank=True)

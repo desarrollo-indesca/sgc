@@ -9,10 +9,14 @@ class CrearCarpetaForm(forms.ModelForm):
 
 class CrearArchivoForm(forms.ModelForm):
     mantener_nombre = forms.BooleanField(required=False)
+    nombre = forms.CharField(max_length=255, required=False)
 
     def clean_nombre(self):
-        nombre = self.cleaned_data.get('nombre')
-        mantener_nombre = self.cleaned_data.get('mantener_nombre')
+        print("cleaning.-.....")
+        nombre = self.data.get('archivo-nombre')
+        mantener_nombre = self.data.get('archivo-mantener_nombre')
+
+        print(self.files)
 
         if not mantener_nombre:
             # Si no se mantiene el nombre, se puede modificar para evitar conflictos
@@ -24,7 +28,7 @@ class CrearArchivoForm(forms.ModelForm):
                 raise forms.ValidationError("Ya existe un archivo con ese nombre en esta sección.")
             elif Carpeta.objects.filter(nombre=nombre, carpeta=self.instance.carpeta).exists():
                 raise forms.ValidationError("Ya existe una carpeta con ese nombre en esta sección.")
-            return nombre
+            return self.files.get('archivo-direccion')
 
     class Meta:
         model = Archivo
