@@ -58,7 +58,7 @@
                             <label class="label">
                                 <span class="label-text">Nombre de la Carpeta</span>
                             </label>
-                            {% render_field form_carpeta.nombre class="input input-bordered w-full" %}
+                            {% render_field form_carpeta.nombre class="input input-bordered w-full" pattern="[^/]+" title="No se permite el caracter /" %}
                         </div>
                     </div>
 
@@ -89,7 +89,7 @@
                             <label class="label">
                                 <span class="label-text">Nombre del Archivo:</span>
                             </label>
-                            {% render_field form_archivo.nombre class="input input-bordered w-full" disabled="" %}
+                            {% render_field form_archivo.nombre class="input input-bordered w-full" disabled="" pattern="[^/]+" title="No se permite el caracter /" %}
 
                             {% render_field form_archivo.mantener_nombre class="checkbox checkbox-primary" checked="checked" %}
                             <label for="id_archivo-mantener_nombre">Mantener el Nombre del Archivo</label>

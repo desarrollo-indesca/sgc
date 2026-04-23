@@ -39,6 +39,10 @@ class Carpeta(models.Model):
             return self.carpeta.ruta_lista() + [self]
         else:
             return [self]
+
+    def ruta_anterior(self):
+        ruta = self.ruta_lista()
+        return "/".join([c.nombre for c in ruta[:-1]]) if len(ruta) > 1 else ""
     
 class Archivo(models.Model):
     nombre = models.CharField(max_length=255)

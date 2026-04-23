@@ -49,10 +49,11 @@
                         </td>
                         <td>{{carpeta.fecha_de_carga}}</td>
                         <td>{{carpeta.creado_por.get_full_name}}</td>
-                        <td>
+                        <td>                            
                             <div class="flex justify-center">
-                                <label for="edit-{{carpeta.pk}}" class="btn btn-sm btn-gray-600">
-                                    <img src="{% static 'img/edit.svg' %}" width="25" height="25" alt="Eliminar">
+                                {% if request.user.is_superuser %}
+                                <label for="edit-{{carpeta.pk}}" class="btn btn-xs btn-gray-600">
+                                    <img src="{% static 'img/edit.svg' %}" width="15" height="15" alt="Eliminar">
                                 </label>
                                 <input type="checkbox" id="edit-{{carpeta.pk}}" class="modal-toggle" />
                                 <div class="modal" id="edit-{{carpeta.pk}}" role="dialog">
@@ -83,11 +84,15 @@
                                 <form action="" method="post" onsubmit="return confirm('¿Desea eliminar esta carpeta?')">
                                     {% csrf_token %}
                                     <input type="hidden" name="eliminar" value="{{carpeta.pk}}">
-                                    <button type="submit" class="btn btn-sm btn-error">
-                                        <img src="{% static 'img/delete.png' %}" width="25" height="25" alt="Eliminar">
+                                    <button type="submit" class="btn btn-xs btn-error">
+                                        <img src="{% static 'img/delete.png' %}" width="15" height="15" alt="Eliminar">
                                     </button>
                                 </form>
                                 {% endif %}
+                                {% endif %}
+                                &nbsp;<label for="edit-{{carpeta.pk}}" class="btn btn-xs btn-info">
+                                    <img src="{% static 'img/history.png' %}" width="15" height="15" alt="Historial">
+                                </label>
                             </div>
                         </td>
                     </tr>
@@ -114,13 +119,13 @@
                         <td>{{archivo.creado_por.get_full_name}}</td>
                         <td>
                             <div class="flex justify-center">
-                                <label for="edit-{{carpeta.pk}}" class="btn btn-sm btn-gray-600">
+                                <label for="edit-{{archivo.pk}}" class="btn btn-sm btn-gray-600">
                                     <img src="{% static 'img/edit.svg' %}" width="25" height="25" alt="Eliminar">
                                 </label>
                                 <input type="checkbox" id="edit-{{carpeta.pk}}" class="modal-toggle" />
                                 <div class="modal" id="edit-{{carpeta.pk}}" role="dialog">
                                     <div class="modal-box p-5">
-                                        <h3 class="font-bold text-lg text-center">Actualizacion de Archivo</h3>
+                                        <h3 class="font-bold text-lg text-center">Actualización de Archivo</h3>
                                         <hr>
                                         <form action="" method="post">
                                             <div class="w-full">
@@ -142,12 +147,13 @@
                                     <label class="modal-backdrop" for="edit-{{carpeta.pk}}">Close</label>
                                 </div>
                                                         &nbsp;
-                                {% if carpeta.carpeta_vacia %}
-                                <form action="" method="post" onsubmit="return confirm('¿Desea eliminar esta carpeta?')">
+                                {% if request.user.is_superuser %}
+                                <form action="" method="post" onsubmit="return confirm('¿Desea eliminar este archivo? Quedará eliminado permanentemente.')">
                                     {% csrf_token %}
-                                    <input type="hidden" name="eliminar" value="{{carpeta.pk}}">
-                                    <button type="submit" class="btn btn-sm btn-error">
-                                        <img src="{% static 'img/delete.png' %}" width="25" height="25" alt="Eliminar">
+                                    <input type="text" name="archivo" value="1" hidden>
+                                    <input type="hidden" name="eliminar" value="{{archivo.pk}}">
+                                    <button type="submit" class="btn btn-xs btn-error">
+                                        <img src="{% static 'img/delete.png' %}" width="15" height="15" alt="Eliminar">
                                     </button>
                                 </form>
                                 {% endif %}

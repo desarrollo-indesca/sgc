@@ -56,7 +56,7 @@ class SeccionListView(LoginRequiredMixin, View):
         })
     
 class LogoutView(LoginRequiredMixin, View):
-    def get(self, request):
+    def post(self, request):
         logout(request)
         return redirect('/login/')
 
@@ -71,130 +71,150 @@ class SeccionCarpetaListView(LoginRequiredMixin, View):
         })
     
     def post(self, request, seccion):
-            archivo = request.POST.get('archivo')
-            nombre_carpeta = request.POST.get('carpeta-nombre')
-            eliminar = request.POST.get('eliminar')
-            editar = request.POST.get('editar')
+        if(request.user.is_superuser):
+                archivo = request.POST.get('archivo')
+                nombre_carpeta = request.POST.get('carpeta-nombre')
+                eliminar = request.POST.get('eliminar')
+                editar = request.POST.get('editar')
 
-            with transaction.atomic():
-                if(archivo):
-                    form_archivo = CrearArchivoForm(request.POST, request.FILES, prefix='archivo')
-                    
-                    try:
-                        if form_archivo.is_valid():
-                                form_archivo.instance.seccion = Seccion.objects.get(pk=seccion)
-                                form_archivo.instance.save()
+                print(f"Archivo: {archivo}, Nombre Carpeta: {nombre_carpeta}, Eliminar: {eliminar}, Editar: {editar}")
 
-                                Registro.objects.create(
-                                    archivo = form_archivo.instance,
-                                    accion = "C",
-                                    usuario = request.user,
-                                    descripcion = f"Creación del archivo {form_archivo.instance.nombre} en la sección {form_archivo.instance.seccion}",
-                                )
-
-                                messages.success(request, 'Archivo creado.')
-                                return redirect(f'/list/{seccion}/')
-                        else:
-                                messages.error(request, f'Error al crear el archivo: {form_archivo.errors}')
-                                print(form_archivo.errors)
-                                return redirect(f'/list/{seccion}/')
-                    except Exception as ex:
-                        messages.error(request, f'Error al crear el archivo: {str(ex)}')
-                        return redirect(f'/list/{seccion}/')
-                elif(eliminar):
-                    carpeta = Carpeta.objects.get(pk=eliminar)
-                    carpeta.activo = False
-                    carpeta.save()
-
-                    Registro.objects.create(
-                        carpeta = carpeta,
-                        accion = "E",
-                        usuario = request.user,
-                        descripcion = f"Eliminación de la carpeta {carpeta.nombre} en la sección {carpeta.seccion}"
-                    )
-
-                    messages.success(request, 'Carpeta eliminada.')
-                    return redirect(f'/list/{seccion}/')
-                elif(editar):
-                    carpeta = Carpeta.objects.get(pk=editar)
-                    name_old = carpeta.nombre
-                    
-                    try:
-                            carpeta.nombre = request.POST.get('carpeta-nombre')
-                            carpeta.save()
+                with transaction.atomic():
+                    if(archivo):
+                        print("Archivo")
+                        if(eliminar):
+                            print("Eliminar")
+                            archivo = Archivo.objects.get(pk=eliminar)
+                            archivo.estado = "E"
+                            archivo.save()
 
                             Registro.objects.create(
-                                carpeta = carpeta,
-                                accion = "U",
+                                archivo = archivo,
+                                accion = "E",
                                 usuario = request.user,
-                                descripcion = f"Edición de la carpeta {name_old} a {carpeta.nombre} en la sección {carpeta.seccion}"
-                            )              
+                                descripcion = f"Eliminación del archivo {archivo.nombre} en la sección {archivo.seccion}"
+                            )
 
-                            messages.success(request, 'Carpeta editada.')
+                            messages.success(request, 'Archivo eliminado. Solo podrá visualizarse o restauren los registros de cambios.')
                             return redirect(f'/list/{seccion}/')
-                    except Exception as ex:
-                        messages.error(request, f'Error al crear la carpeta: {str(ex)}')
+                             
+                        form_archivo = CrearArchivoForm(request.POST, request.FILES, prefix='archivo')
+                        
+                        try:
+                            if form_archivo.is_valid():
+                                    form_archivo.instance.seccion = Seccion.objects.get(pk=seccion)
+                                    form_archivo.instance.save()
+
+                                    Registro.objects.create(
+                                        archivo = form_archivo.instance,
+                                        accion = "C",
+                                        usuario = request.user,
+                                        descripcion = f"Creación del archivo {form_archivo.instance.nombre} en la sección {form_archivo.instance.seccion}",
+                                    )
+
+                                    messages.success(request, 'Archivo creado.')
+                                    return redirect(f'/list/{seccion}/')
+                            else:
+                                    messages.error(request, f'Error al crear el archivo: {form_archivo.errors}')
+                                    print(form_archivo.errors)
+                                    return redirect(f'/list/{seccion}/')
+                        except Exception as ex:
+                            messages.error(request, f'Error al crear el archivo: {str(ex)}')
+                            return redirect(f'/list/{seccion}/')
+                    elif(eliminar):
+                        carpeta = Archivo.objects.get(pk=eliminar)
+                        archivo.activo = False
+                        carpeta.save()
+
+                        Registro.objects.create(
+                            carpeta = carpeta,
+                            accion = "E",
+                            usuario = request.user,
+                            descripcion = f"Eliminación de la carpeta {carpeta.nombre} en la sección {carpeta.seccion}"
+                        )
+
+                        messages.success(request, 'Carpeta eliminada.')
                         return redirect(f'/list/{seccion}/')
-
-
-                if(nombre_carpeta and not editar):
-                    form_carpeta = CrearCarpetaForm(request.POST, prefix='carpeta')
-                    
-                    try:
-                        if form_carpeta.is_valid():
-                                form_carpeta.instance.seccion = Seccion.objects.get(pk=seccion)
-                                form_carpeta.save()
+                    elif(editar):
+                        carpeta = Carpeta.objects.get(pk=editar)
+                        name_old = carpeta.nombre
+                        
+                        try:
+                                carpeta.nombre = request.POST.get('carpeta-nombre')
+                                carpeta.save()
 
                                 Registro.objects.create(
-                                    carpeta = form_carpeta.instance,
-                                    accion = "C",
+                                    carpeta = carpeta,
+                                    accion = "U",
                                     usuario = request.user,
-                                    descripcion = f"Creación de la carpeta {form_carpeta.instance.nombre} en la sección {form_carpeta.instance.seccion}"
-                                )
+                                    descripcion = f"Edición de la carpeta {name_old} a {carpeta.nombre} en la sección {carpeta.seccion}"
+                                )              
 
-                                messages.success(request, 'Carpeta creada.')
+                                messages.success(request, 'Carpeta editada.')
                                 return redirect(f'/list/{seccion}/')
-                        else:
-                                messages.error(request, 'Error al crear la carpeta.')
-                                print(form_carpeta.errors)
-                                return redirect(f'/list/{seccion}/')
-                    except Exception as ex:
-                        messages.error(request, f'Error al crear la carpeta: {str(ex)}')
-                        return redirect(f'/list/{seccion}/')
-                elif(eliminar):
-                    carpeta = Carpeta.objects.get(pk=eliminar)
-                    carpeta.activo = False
-                    carpeta.save()
-
-                    Registro.objects.create(
-                        carpeta = carpeta,
-                        accion = "E",
-                        usuario = request.user,
-                        descripcion = f"Eliminación de la carpeta {carpeta.nombre} en la sección {carpeta.seccion}"
-                    )
-
-                    messages.success(request, 'Carpeta eliminada.')
-                    return redirect(f'/list/{seccion}/')
-                elif(editar):
-                    carpeta = Carpeta.objects.get(pk=editar)
-                    name_old = carpeta.nombre
-                    
-                    try:
-                            carpeta.nombre = request.POST.get('carpeta-nombre')
-                            carpeta.save()
-
-                            Registro.objects.create(
-                                carpeta = carpeta,
-                                accion = "U",
-                                usuario = request.user,
-                                descripcion = f"Edición de la carpeta {name_old} a {carpeta.nombre} en la sección {carpeta.seccion}"
-                            )              
-
-                            messages.success(request, 'Carpeta editada.')
+                        except Exception as ex:
+                            messages.error(request, f'Error al crear la carpeta: {str(ex)}')
                             return redirect(f'/list/{seccion}/')
-                    except Exception as ex:
-                        messages.error(request, f'Error al crear la carpeta: {str(ex)}')
+
+
+                    if(nombre_carpeta and not editar):
+                        form_carpeta = CrearCarpetaForm(request.POST, prefix='carpeta')
+                        
+                        try:
+                            if form_carpeta.is_valid():
+                                    form_carpeta.instance.seccion = Seccion.objects.get(pk=seccion)
+                                    form_carpeta.save()
+
+                                    Registro.objects.create(
+                                        carpeta = form_carpeta.instance,
+                                        accion = "C",
+                                        usuario = request.user,
+                                        descripcion = f"Creación de la carpeta {form_carpeta.instance.nombre} en la sección {form_carpeta.instance.seccion}"
+                                    )
+
+                                    messages.success(request, 'Carpeta creada.')
+                                    return redirect(f'/list/{seccion}/')
+                            else:
+                                    messages.error(request, 'Error al crear la carpeta.')
+                                    print(form_carpeta.errors)
+                                    return redirect(f'/list/{seccion}/')
+                        except Exception as ex:
+                            messages.error(request, f'Error al crear la carpeta: {str(ex)}')
+                            return redirect(f'/list/{seccion}/')
+                    elif(eliminar):
+                        carpeta = Carpeta.objects.get(pk=eliminar)
+                        carpeta.activo = False
+                        carpeta.save()
+
+                        Registro.objects.create(
+                            carpeta = carpeta,
+                            accion = "E",
+                            usuario = request.user,
+                            descripcion = f"Eliminación de la carpeta {carpeta.nombre} en la sección {carpeta.seccion}"
+                        )
+
+                        messages.success(request, 'Carpeta eliminada.')
                         return redirect(f'/list/{seccion}/')
+                    elif(editar):
+                        carpeta = Carpeta.objects.get(pk=editar)
+                        name_old = carpeta.nombre
+                        
+                        try:
+                                carpeta.nombre = request.POST.get('carpeta-nombre')
+                                carpeta.save()
+
+                                Registro.objects.create(
+                                    carpeta = carpeta,
+                                    accion = "U",
+                                    usuario = request.user,
+                                    descripcion = f"Edición de la carpeta {name_old} a {carpeta.nombre} en la sección {carpeta.seccion}"
+                                )              
+
+                                messages.success(request, 'Carpeta editada.')
+                                return redirect(f'/list/{seccion}/')
+                        except Exception as ex:
+                            messages.error(request, f'Error al crear la carpeta: {str(ex)}')
+                            return redirect(f'/list/{seccion}/')
 
 class CarpetaListView(LoginRequiredMixin, View):
     def get(self, request, seccion, carpeta):
