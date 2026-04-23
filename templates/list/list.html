@@ -9,6 +9,16 @@
         <h1 class="text-center text-3xl font-bold">
             {{seccion.nombre}}
         </h1>
+
+        <h2>
+        <a href="{% url 'list_files' seccion=seccion.pk %}">{{seccion.nombre}}</a> / 
+        {% if ruta_carpeta %}
+            {% for carpeta in ruta_carpeta %}
+                <a href="{% url 'list_files_carpeta' seccion=seccion.pk carpeta=carpeta.ruta %}">{{carpeta.nombre}}</a> / 
+            {% endfor %}
+        {% endif %}
+        </h2>
+
         <hr>
 
         <table class="table-xs w-full border-collapse border border-gray-300">
@@ -35,7 +45,7 @@
                             </div>
                         </td>
                         <td style="text-align: center;">
-                            <a href="#" class="hover:underline">{{carpeta.nombre}}</a>
+                            <a href="{% url 'list_files_carpeta' seccion=seccion.pk carpeta=carpeta.ruta %}" class="hover:underline">{{carpeta.nombre}}</a>
                         </td>
                         <td>{{carpeta.fecha_de_carga}}</td>
                         <td>{{carpeta.creado_por.get_full_name}}</td>

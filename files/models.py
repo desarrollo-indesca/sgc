@@ -28,6 +28,18 @@ class Carpeta(models.Model):
     def carpeta_vacia(self):
         return self.archivos.count() == 0 and self.carpetas.count() == 0
     
+    def ruta(self):
+        if self.carpeta:
+            return f"{self.carpeta.ruta()}/{self.nombre}"
+        else:
+            return self.nombre
+        
+    def ruta_lista(self):
+        if self.carpeta:
+            return self.carpeta.ruta_lista() + [self]
+        else:
+            return [self]
+    
 class Archivo(models.Model):
     nombre = models.CharField(max_length=255)
     carpeta = models.ForeignKey(Carpeta, on_delete=models.CASCADE, related_name='archivos', null=True, blank=True)

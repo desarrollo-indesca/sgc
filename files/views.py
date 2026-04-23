@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import authenticate, login, logout
@@ -76,12 +76,9 @@ class SeccionCarpetaListView(LoginRequiredMixin, View):
             eliminar = request.POST.get('eliminar')
             editar = request.POST.get('editar')
 
-            print(archivo)
-
             with transaction.atomic():
                 if(archivo):
                     form_archivo = CrearArchivoForm(request.POST, request.FILES, prefix='archivo')
-                    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAA")
                     
                     try:
                         if form_archivo.is_valid():
@@ -199,20 +196,37 @@ class SeccionCarpetaListView(LoginRequiredMixin, View):
                         messages.error(request, f'Error al crear la carpeta: {str(ex)}')
                         return redirect(f'/list/{seccion}/')
 
-class FileUploadView(LoginRequiredMixin, View):
-    pass
+class CarpetaListView(LoginRequiredMixin, View):
+    def get(self, request, seccion, carpeta):
 
-class FolderCreateView(LoginRequiredMixin, View):
-    pass
+        direcciones = carpeta.split('/')
+    
+        # Get the root folder or 404
+        carpeta_padre = get_object_or_404(
+            Carpeta, 
+            seccion__pk=seccion, 
+            nombre=direcciones[0], 
+            activo=True
+        )
 
-class FolderUpdateView(LoginRequiredMixin, View):
-    pass
+        # Traverse the path; if any step fails, it raises a 404
+        for i in range(1, len(direcciones)):
+            carpeta_padre = get_object_or_404(
+                Carpeta, 
+                seccion__pk=seccion, 
+                carpeta=carpeta_padre, 
+                nombre=direcciones[i], 
+                activo=True
+            )
 
-class FileUpdateView(LoginRequiredMixin, View):
-    pass
+        # Get the section or 404
+        seccion_obj = get_object_or_404(Seccion, pk=seccion)
 
-class FileChangeStatusView(LoginRequiredMixin, View):
-    pass
-
-class SectionCreateView(LoginRequiredMixin, View):
-    pass
+        return render(request, 'list/list.html', {
+            'carpetas': Carpeta.objects.filter(carpeta=carpeta_padre, activo=True),
+            'archivos': Archivo.objects.filter(carpeta=carpeta_padre, estado__in=['P', 'B']),
+            'seccion': seccion_obj,
+            'form_carpeta': CrearCarpetaForm(prefix='carpeta'),
+            'form_archivo': CrearArchivoForm(prefix='archivo'),
+            'ruta_carpeta': carpeta_padre.ruta_lista(),
+        })
