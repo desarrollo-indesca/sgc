@@ -65,7 +65,7 @@
                                                 {% csrf_token %}
                                                 <div class="form-control w-full">
                                                     <label class="label">
-                                                        <span class="label-text">Nombre de la Carpeta</span>
+                                                        <span class="label-text">Nombre de</span>
                                                     </label>
                                                     <input type="text" class="input input-bordered" name="carpeta-nombre" value="{{carpeta.nombre}}">
                                                     <input type="text" name="editar" value="{{carpeta.pk}}" hidden>
@@ -129,15 +129,17 @@
                                                 {% csrf_token %}
                                                 <div class="form-control w-full">
                                                     <label class="label">
-                                                        <span class="label-text">Nombre de la Carpeta</span>
+                                                        <span class="label-text">Nombre del archivo</span>
                                                     </label>
-                                                    <input type="text" class="input input-bordered" name="carpeta-nombre" value="{{carpeta.nombre}}">
-                                                    <input type="text" name="editar" value="{{carpeta.pk}}" hidden>
+                                                    <input type="text" class="input input-bordered" name="archivo-nombre" value="{{archivo.nombre}}">
+                                                    <input type="text" name="editar" value="{{archivo.pk}}" hidden>
                                                 </div>
+
+                                                
                                             </div>
 
                                             <div class="modal-action flex justify-center">
-                                                <button type="submit" class="btn btn-error">Editar Carpeta</button>
+                                                <button type="submit" class="btn btn-error">Editar Archivo</button>
                                             </div>
                                         </form>
                                     </div>

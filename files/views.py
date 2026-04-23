@@ -76,7 +76,7 @@ class SeccionCarpetaListView(LoginRequiredMixin, View):
                 nombre_carpeta = request.POST.get('carpeta-nombre')
                 eliminar = request.POST.get('eliminar')
                 editar = request.POST.get('editar')
-                
+
                 with transaction.atomic():
                     if(archivo):
                         print("Archivo")
@@ -95,6 +95,27 @@ class SeccionCarpetaListView(LoginRequiredMixin, View):
 
                             messages.success(request, 'Archivo eliminado. Solo podrá visualizarse o restauren los registros de cambios.')
                             return redirect(f'/list/{seccion}/')
+                        elif(editar):
+                            print("Editar")
+                            archivo = Archivo.objects.get(pk=editar)
+                            name_old = archivo.nombre
+
+                            form_archivo = CrearArchivoForm(request.POST, request.FILES, instance=archivo, prefix='archivo')
+                            
+                            try:
+                                    form_archivo.save()
+                                    Registro.objects.create(
+                                        archivo = archivo,
+                                        accion = "U",
+                                        usuario = request.user,
+                                        descripcion = f"Edición del archivo {name_old} a {archivo.nombre} en la carpeta {archivo.carpeta.ruta() if archivo.carpeta else 'Raíz de la sección ' + str(archivo.seccion)}",
+                                    )              
+
+                                    messages.success(request, 'Archivo editado.')
+                                    return redirect(f'/list/{seccion}/')
+                            except Exception as ex:
+                                messages.error(request, f'Error al editar el archivo: {str(ex)}')
+                                return redirect(f'/list/{seccion}/')
                              
                         form_archivo = CrearArchivoForm(request.POST, request.FILES, prefix='archivo')
                         
