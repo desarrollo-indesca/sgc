@@ -90,9 +90,6 @@
                                 </form>
                                 {% endif %}
                                 {% endif %}
-                                &nbsp;<label for="edit-{{carpeta.pk}}" class="btn btn-xs btn-info">
-                                    <img src="{% static 'img/history.png' %}" width="15" height="15" alt="Historial">
-                                </label>
                             </div>
                         </td>
                     </tr>
@@ -122,8 +119,8 @@
                                 <label for="edit-{{archivo.pk}}" class="btn btn-sm btn-gray-600">
                                     <img src="{% static 'img/edit.svg' %}" width="25" height="25" alt="Eliminar">
                                 </label>
-                                <input type="checkbox" id="edit-{{carpeta.pk}}" class="modal-toggle" />
-                                <div class="modal" id="edit-{{carpeta.pk}}" role="dialog">
+                                <input type="checkbox" id="edit-{{archivo.pk}}" class="modal-toggle" />
+                                <div class="modal" id="edit-{{archivo.pk}}" role="dialog">
                                     <div class="modal-box p-5">
                                         <h3 class="font-bold text-lg text-center">Actualización de Archivo</h3>
                                         <hr>

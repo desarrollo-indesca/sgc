@@ -72,10 +72,14 @@ class Archivo(models.Model):
 
         full_path = root + carpeta_path
 
-        filename = f"{full_path}/{uid}-{filename}"
+        filename = self.direccion.name
+        
         filename = ''.join(c for c in filename if c in "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789" or c in (' ', '-', '.'))
+        
         uid = uuid.uuid4().hex
-        return 
+        filename = f"{full_path}/{uid}-{filename}"
+        
+        return filename
     
     direccion = models.FileField(upload_to=upload)
 

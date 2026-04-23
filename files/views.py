@@ -76,9 +76,7 @@ class SeccionCarpetaListView(LoginRequiredMixin, View):
                 nombre_carpeta = request.POST.get('carpeta-nombre')
                 eliminar = request.POST.get('eliminar')
                 editar = request.POST.get('editar')
-
-                print(f"Archivo: {archivo}, Nombre Carpeta: {nombre_carpeta}, Eliminar: {eliminar}, Editar: {editar}")
-
+                
                 with transaction.atomic():
                     if(archivo):
                         print("Archivo")
