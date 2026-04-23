@@ -1,4 +1,7 @@
+import uuid
+
 from django.db import models
+from django.conf import settings
 
 # Create your models here.
 
@@ -27,7 +30,6 @@ class Carpeta(models.Model):
     
 class Archivo(models.Model):
     nombre = models.CharField(max_length=255)
-    direccion = models.FileField(upload_to='archivos/')
     carpeta = models.ForeignKey(Carpeta, on_delete=models.CASCADE, related_name='archivos', null=True, blank=True)
     version_siguiente = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='versiones_anteriores')
     estado = models.CharField(max_length=1, default='P') # 'P' Publicado, 'B' Borrador, 'E' Eliminado 
@@ -41,6 +43,25 @@ class Archivo(models.Model):
     
     def creado_por(self):
         return self.registros.get(accion='C').usuario if self.registros.filter(accion='C').exists() else None
+
+    def upload(self, *args, **kwargs):
+        root = settings.MEDIA_ROOT.__str__()
+
+        if(self.seccion):
+            root = root + "/" + self.seccion.nombre.upper() + "/"
+
+        carpeta_path = ''
+        if(self.carpeta):
+            carpeta_path = self.carpeta.nombre.upper() + "/" + carpeta_path
+
+        full_path = root + carpeta_path
+
+        filename = f"{full_path}/{uid}-{filename}"
+        filename = ''.join(c for c in filename if c in "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789" or c in (' ', '-', '.'))
+        uid = uuid.uuid4().hex
+        return 
+    
+    direccion = models.FileField(upload_to=upload)
 
 class Registro(models.Model):
     archivo = models.ForeignKey(Archivo, on_delete=models.CASCADE, related_name='registros', null=True, blank=True)

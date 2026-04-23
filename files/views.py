@@ -64,6 +64,7 @@ class SeccionCarpetaListView(LoginRequiredMixin, View):
     def get(self, request, seccion):
         return render(request, 'list/list.html', {
             'carpetas': Carpeta.objects.filter(seccion__pk=seccion, activo=True),
+            'archivos': Archivo.objects.filter(seccion__pk=seccion, estado__in=['P', 'B']),
             'seccion': Seccion.objects.get(pk=seccion),
             'form_carpeta': CrearCarpetaForm(prefix='carpeta'),
             'form_archivo': CrearArchivoForm(prefix='archivo'),

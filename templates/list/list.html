@@ -86,17 +86,19 @@
                     {% for archivo in archivos %}
                     <tr class="hover:bg-gray-100 text-center">
                             <td>
-                                {% if '.pdf' in archivo.nombre %}
+                                <div class="flex justify-center">
+                                    {% if '.pdf' in archivo.nombre %}
                                     <img src="{% static 'img/pdf.svg' %}" width="25" height="25" alt="PDF">
-                                {% elif '.doc' in archivo.nombre or '.docx' in archivo.nombre %}
-                                    <img src="{% static 'img/docx.png' %}" width="25" height="25" alt="Documento">
-                                {% elif '.xls' in archivo.nombre or '.xlsx' in archivo.nombre %}
-                                    <img src="{% static 'img/xlsx.png' %}" width="25" height="25" alt="Excel">
-                                {% endif %}
+                                    {% elif '.doc' in archivo.nombre or '.docx' in archivo.nombre %}
+                                        <img src="{% static 'img/docx.png' %}" width="25" height="25" alt="Documento">
+                                    {% elif '.xls' in archivo.nombre or '.xlsx' in archivo.nombre %}
+                                        <img src="{% static 'img/xlsx.png' %}" width="25" height="25" alt="Excel">
+                                    {% endif %}
+                                </div>
                             </div>
                         </td>
                         <td style="text-align: center;">
-                            <a href="#" class="hover:underline">{{archivo.nombre}}</a>
+                            <a href="{{archivo.direccion.url}}" target="_blank" class="hover:underline">{{archivo.nombre}}</a>
                         </td>
                         <td>{{archivo.fecha_de_carga}}</td>
                         <td>{{archivo.creado_por.get_full_name}}</td>
