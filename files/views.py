@@ -90,7 +90,7 @@ class SeccionCarpetaListView(LoginRequiredMixin, View):
                                 archivo = archivo,
                                 accion = "E",
                                 usuario = request.user,
-                                descripcion = f"Eliminación del archivo {archivo.nombre} en la sección {archivo.seccion}"
+                                descripcion = f"Eliminación del archivo '{archivo.nombre}' en la sección '{archivo.seccion}'."
                             )
 
                             messages.success(request, 'Archivo eliminado. Solo podrá visualizarse o restauren los registros de cambios.')
@@ -113,14 +113,14 @@ class SeccionCarpetaListView(LoginRequiredMixin, View):
                                         archivo = archivo,
                                         accion = "U",
                                         usuario = request.user,
-                                        descripcion = f"Actualización del archivo {name_old} a {archivo.nombre} en la carpeta {archivo.carpeta.ruta() if archivo.carpeta else 'Raíz de la sección ' + str(archivo.seccion)}",
+                                        descripcion = f"Actualización del archivo '{name_old}' a '{archivo.nombre}' en la carpeta '{archivo.carpeta.ruta() if archivo.carpeta else 'Raíz de la sección ' + str(archivo.seccion)}'.",
                                     ) 
 
                                     Registro.objects.create(
                                         archivo = form_archivo.instance,
                                         accion = "C",
                                         usuario = request.user,
-                                        descripcion = f"Creación del archivo {form_archivo.instance.nombre} en la sección {form_archivo.instance.seccion}; versión nueva de {name_old} en la carpeta {archivo.carpeta.ruta() if archivo.carpeta else 'Raíz de la sección ' + str(archivo.seccion)}",
+                                        descripcion = f"Creación del archivo '{form_archivo.instance.nombre}' en la sección '{form_archivo.instance.seccion}'; versión nueva de '{name_old}' en la carpeta '{archivo.carpeta.ruta() if archivo.carpeta else 'Raíz de la sección ' + str(archivo.seccion)}'.",
                                     )             
 
                                     messages.success(request, 'Archivo actualizado.')
@@ -140,7 +140,7 @@ class SeccionCarpetaListView(LoginRequiredMixin, View):
                                         archivo = form_archivo.instance,
                                         accion = "C",
                                         usuario = request.user,
-                                        descripcion = f"Creación del archivo {form_archivo.instance.nombre} en la sección {form_archivo.instance.seccion}",
+                                        descripcion = f"Creación del archivo '{form_archivo.instance.nombre}' en la sección '{form_archivo.instance.seccion}'.",
                                     )
 
                                     messages.success(request, 'Archivo creado.')
@@ -161,7 +161,7 @@ class SeccionCarpetaListView(LoginRequiredMixin, View):
                             carpeta = carpeta,
                             accion = "E",
                             usuario = request.user,
-                            descripcion = f"Eliminación de la carpeta {carpeta.nombre} en la sección {carpeta.seccion}"
+                            descripcion = f"Eliminación de la carpeta '{carpeta.nombre}' en la sección '{carpeta.seccion}'."
                         )
 
                         messages.success(request, 'Carpeta eliminada.')
@@ -178,7 +178,7 @@ class SeccionCarpetaListView(LoginRequiredMixin, View):
                                     carpeta = carpeta,
                                     accion = "U",
                                     usuario = request.user,
-                                    descripcion = f"Edición de la carpeta {name_old} a {carpeta.nombre} en la sección {carpeta.seccion}"
+                                    descripcion = f"Edición de la carpeta '{name_old}' a '{carpeta.nombre}' en la sección '{carpeta.seccion}'."
                                 )              
 
                                 messages.success(request, 'Carpeta editada.')
@@ -200,7 +200,7 @@ class SeccionCarpetaListView(LoginRequiredMixin, View):
                                         carpeta = form_carpeta.instance,
                                         accion = "C",
                                         usuario = request.user,
-                                        descripcion = f"Creación de la carpeta {form_carpeta.instance.nombre} en la sección {form_carpeta.instance.seccion}"
+                                        descripcion = f"Creación de la carpeta '{form_carpeta.instance.nombre}' en la sección '{form_carpeta.instance.seccion}'"
                                     )
 
                                     messages.success(request, 'Carpeta creada.')
@@ -221,7 +221,7 @@ class SeccionCarpetaListView(LoginRequiredMixin, View):
                             carpeta = carpeta,
                             accion = "E",
                             usuario = request.user,
-                            descripcion = f"Eliminación de la carpeta {carpeta.nombre} en la sección {carpeta.seccion}"
+                            descripcion = f"Eliminación de la carpeta '{carpeta.nombre}' en la sección '{carpeta.seccion}'."
                         )
 
                         messages.success(request, 'Carpeta eliminada.')
@@ -238,7 +238,7 @@ class SeccionCarpetaListView(LoginRequiredMixin, View):
                                     carpeta = carpeta,
                                     accion = "U",
                                     usuario = request.user,
-                                    descripcion = f"Edición de la carpeta {name_old} a {carpeta.nombre} en la sección {carpeta.seccion}"
+                                    descripcion = f"Edición de la carpeta '{name_old}' a '{carpeta.nombre}' en la sección '{carpeta.seccion}'."
                                 )              
 
                                 messages.success(request, 'Carpeta editada.')
