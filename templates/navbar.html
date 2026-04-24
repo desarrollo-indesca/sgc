@@ -51,7 +51,7 @@
         <label for="busqueda" class="btn btn-sm btn-gray-600"> Búsqueda General </label>
 
         &nbsp;
-        {% if request.user.is_superuser %}
+        {% if request.user.is_superuser and not busqueda %}
           <label for="creacion-carpeta" class="btn btn-sm btn-gray-600"> + Nueva Carpeta </label>
           {% if not no_crear_archivo %}
           <label for="creacion-archivo" class="btn btn-sm btn-gray-600"> + Nuevo Archivo </label>

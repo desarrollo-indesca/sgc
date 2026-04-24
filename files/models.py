@@ -39,6 +39,13 @@ class Carpeta(models.Model):
             return self.carpeta.ruta_lista() + [self]
         else:
             return [self]
+        
+    def seccion_padre(self):
+        if(not self.seccion):
+            return self.carpeta.seccion_padre()
+        else:
+            print("Carpeta sin sección padre:", self.nombre, self.seccion)
+            return self.seccion
 
     def ruta_anterior(self):
         ruta = self.ruta_lista()
@@ -59,6 +66,13 @@ class Archivo(models.Model):
     
     def creado_por(self):
         return self.registros.get(accion='C').usuario if self.registros.filter(accion='C').exists() else None
+    
+    def seccion_padre(self):
+        if(not self.seccion):
+            return self.carpeta.seccion_padre()
+        else:
+            print("Archivo sin sección padre:", self.nombre, self.seccion)
+            return self.seccion
 
     def upload(self, *args, **kwargs):
         root = settings.MEDIA_ROOT.__str__()

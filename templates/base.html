@@ -173,5 +173,29 @@
             <label class="modal-backdrop" for="creacion-archivo">Close</label>
         </div>
     {% endif %}
+
+    <input type="checkbox" id="busqueda" class="modal-toggle" />
+        <div class="modal" id="busqueda" role="dialog">
+            <div class="modal-box p-5">
+                <h3 class="font-bold text-lg text-center">Búsqueda General de Archivos y Carpetas</h3>
+                <hr>
+                <form action="{% url 'busqueda' %}" method="get">
+                    <div class="w-full">
+                        {% csrf_token %}
+                        <div class="form-control w-full">
+                            <label class="label">
+                                <span class="label-text">Archivo o Carpeta a buscar:</span>
+                            </label>
+                            <input type="text" name="busqueda" class="input input-bordered w-full" placeholder="Ingrese el nombre del archivo o carpeta">
+                        </div>
+                    </div>
+
+                    <div class="modal-action flex justify-center">
+                        <button type="submit" class="btn btn-error">Buscar</button>
+                    </div>
+                </form>
+            </div>
+            <label class="modal-backdrop" for="busqueda">Close</label>
+        </div>
 </body>
 </html>

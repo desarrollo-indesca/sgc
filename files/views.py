@@ -2,9 +2,11 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth import get_user_model
+from functools import reduce
+import operator
 from django.contrib import messages
 from django.db import transaction
+from django.db.models import Q
 
 from .models import Seccion, Archivo, Carpeta, Registro
 from .forms import *
@@ -475,6 +477,35 @@ class CarpetaListView(LoginRequiredMixin, View):
                         except Exception as ex:
                             messages.error(request, f'Error al crear la carpeta: {str(ex)}')
                             return redirect(f'/list/{seccion}/carpetas/{carpeta.ruta()}')
+
+class BusquedaView(LoginRequiredMixin, View):
+    def get(self, request):
+        busqueda = request.GET.get('busqueda')
+
+        tokens = busqueda.split()
+
+        if tokens:
+            # 2. Create a list of Q objects: name__icontains for each token
+            # This creates: Q(nombre__icontains="word1") & Q(nombre__icontains="word2")...
+            query_logic = reduce(operator.and_, (Q(nombre__icontains=token) for token in tokens))
+            
+            # 3. Apply to your filters
+            archivos = Archivo.objects.filter(query_logic, estado__in=['P', 'B'])
+            carpetas = Carpeta.objects.filter(query_logic, activo=True)
+        else:
+            # Fallback if search is empty
+            archivos = Archivo.objects.filter(estado__in=['P', 'B'])
+            carpetas = Carpeta.objects.filter(activo=True)
+
+        print(f"Resultados de búsqueda para '{busqueda}': {archivos.count()} archivos, {carpetas.count()} carpetas")
+        print("Archivos encontrados:", archivos)
+        print("Carpetas encontradas:", carpetas)
+
+        return render(request, 'list/list_busqueda.html', {
+            'archivos': archivos,
+            'carpetas': carpetas,
+            'busqueda': busqueda,
+        })
 
 class VersionesArchivoView(LoginRequiredMixin, View):
     def get(self, request, archivo):
