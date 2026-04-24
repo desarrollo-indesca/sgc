@@ -172,6 +172,34 @@
             </div>
             <label class="modal-backdrop" for="creacion-archivo">Close</label>
         </div>
+
+    <input type="checkbox" id="creacion-archivos" class="modal-toggle" />
+        <div class="modal" id="creacion-archivos" role="dialog">
+            <div class="modal-box p-5">
+                <h3 class="font-bold text-lg text-center">Carga de Archivos</h3>
+                <hr>
+                <form action="" method="post" enctype="multipart/form-data">
+                    <div class="w-full">
+                        {% csrf_token %}
+                        <div class="form-control w-full">
+                            <label class="label">
+                                <span class="label-text">Archivos a Cargar:</span>
+                            </label>
+                            <input type="hidden" name="archivo" value="1">
+
+                            {% render_field form_archivo.direccion class="input input-bordered w-full" accept=".pdf, .xls, .xlsx, .doc, .docx" multiple="multiple" %}
+
+                            <input type="checkbox" name="archivo-mantener_nombre" id="id_archivo-mantener_nombre" checked="checked" hidden>
+                        </div>
+                    </div>
+
+                    <div class="modal-action flex justify-center">
+                        <button type="submit" class="btn btn-error">Crear Archivo</button>
+                    </div>
+                </form>
+            </div>
+            <label class="modal-backdrop" for="creacion-archivos">Close</label>
+        </div>
     {% endif %}
 
     <input type="checkbox" id="busqueda" class="modal-toggle" />

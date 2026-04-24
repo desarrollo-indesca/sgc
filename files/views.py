@@ -130,30 +130,33 @@ class SeccionCarpetaListView(LoginRequiredMixin, View):
                             except Exception as ex:
                                 messages.error(request, f'Error al editar el archivo: {str(ex)}')
                                 return redirect(f'/list/{seccion}/')
-                             
-                        form_archivo = CrearArchivoForm(request.POST, request.FILES, prefix='archivo')
-                        
-                        try:
-                            if form_archivo.is_valid():
-                                    form_archivo.instance.seccion = Seccion.objects.get(pk=seccion)
-                                    form_archivo.instance.save()
+                            
+                        files = request.FILES.getlist('archivo-direccion')
 
-                                    Registro.objects.create(
-                                        archivo = form_archivo.instance,
-                                        accion = "C",
-                                        usuario = request.user,
-                                        descripcion = f"Creación del archivo '{form_archivo.instance.nombre}' en la sección '{form_archivo.instance.seccion}'.",
-                                    )
+                        for file in files:
+                                form_archivo = CrearArchivoForm(request.POST, {'archivo-direccion': file}, prefix='archivo')
+                                
+                                try:
+                                    if form_archivo.is_valid():
+                                        form_archivo.instance.seccion = Seccion.objects.get(pk=seccion)
+                                        form_archivo.instance.save()
 
-                                    messages.success(request, 'Archivo creado.')
+                                        Registro.objects.create(
+                                            archivo = form_archivo.instance,
+                                            accion = "C",
+                                            usuario = request.user,
+                                            descripcion = f"Creación del archivo '{form_archivo.instance.nombre}' en la sección '{form_archivo.instance.seccion}'.",
+                                        )
+                                    else:
+                                            messages.error(request, f'Error al crear el archivo: {form_archivo.errors}')
+                                            print(form_archivo.errors)
+                                            return redirect(f'/list/{seccion}/')
+                                except Exception as ex:
+                                    messages.error(request, f'Error al crear el archivo: {str(ex)}')
                                     return redirect(f'/list/{seccion}/')
-                            else:
-                                    messages.error(request, f'Error al crear el archivo: {form_archivo.errors}')
-                                    print(form_archivo.errors)
-                                    return redirect(f'/list/{seccion}/')
-                        except Exception as ex:
-                            messages.error(request, f'Error al crear el archivo: {str(ex)}')
-                            return redirect(f'/list/{seccion}/')
+
+                        messages.success(request, 'Archivo creado.')
+                        return redirect(f'/list/{seccion}/')
                     elif(eliminar):
                         carpeta = Archivo.objects.get(pk=eliminar)
                         archivo.activo = False
@@ -359,30 +362,33 @@ class CarpetaListView(LoginRequiredMixin, View):
                             except Exception as ex:
                                 messages.error(request, f'Error al editar el archivo: {str(ex)}')
                                 return redirect(f'/list/{seccion}/carpetas/{carpeta.ruta()}')
-                             
-                        form_archivo = CrearArchivoForm(request.POST, request.FILES, prefix='archivo')
+                            
+                        files = request.FILES.getlist('archivo-direccion')
+
+                        for file in files:
+                            form_archivo = CrearArchivoForm(request.POST, {'archivo-direccion': file}, prefix='archivo')
                         
-                        try:
-                            if form_archivo.is_valid():
-                                    form_archivo.instance.carpeta = carpeta
-                                    form_archivo.instance.save()
+                            try:
+                                if form_archivo.is_valid():
+                                        form_archivo.instance.carpeta = carpeta
+                                        form_archivo.instance.save()
 
-                                    Registro.objects.create(
-                                        archivo = form_archivo.instance,
-                                        accion = "C",
-                                        usuario = request.user,
-                                        descripcion = f"Creación del archivo '{form_archivo.instance.nombre}' en la ruta '{form_archivo.instance.ruta()}'.",
-                                    )
-
-                                    messages.success(request, 'Archivo creado.')
-                                    return redirect(f'/list/{seccion}/carpetas/{carpeta.ruta()}')
-                            else:
-                                    messages.error(request, f'Error al crear el archivo: {form_archivo.errors}')
-                                    print(form_archivo.errors)
-                                    return redirect(f'/list/{seccion}/carpetas/{carpeta.ruta()}')
-                        except Exception as ex:
-                            messages.error(request, f'Error al crear el archivo: {str(ex)}')
-                            return redirect(f'/list/{seccion}/')
+                                        Registro.objects.create(
+                                            archivo = form_archivo.instance,
+                                            accion = "C",
+                                            usuario = request.user,
+                                            descripcion = f"Creación del archivo '{form_archivo.instance.nombre}' en la ruta '{form_archivo.instance.carpeta.ruta()}'.",
+                                        )
+                                else:
+                                        messages.error(request, f'Error al crear el archivo: {form_archivo.errors}')
+                                        print(form_archivo.errors)
+                                        return redirect(f'/list/{seccion}/carpetas/{carpeta.ruta()}')
+                            except Exception as ex:
+                                messages.error(request, f'Error al crear el archivo: {str(ex)}')
+                                return redirect(f'/list/{seccion}/')
+                    
+                        messages.success(request, 'Archivo creado.')
+                        return redirect(f'/list/{seccion}/carpetas/{carpeta.ruta()}')
                     elif(eliminar):
                         carpeta = Archivo.objects.get(pk=eliminar)
                         archivo.activo = False
@@ -417,7 +423,6 @@ class CarpetaListView(LoginRequiredMixin, View):
                         except Exception as ex:
                             messages.error(request, f'Error al crear la carpeta: {str(ex)}')
                             return redirect(f'/list/{seccion}/carpetas/{carpeta.ruta()}')
-
 
                     if(nombre_carpeta and not editar):
                         form_carpeta = CrearCarpetaForm(request.POST, prefix='carpeta')
