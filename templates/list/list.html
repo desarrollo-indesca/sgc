@@ -101,9 +101,9 @@
                                 <div class="flex justify-center">
                                     {% if '.pdf' in archivo.nombre %}
                                     <img src="{% static 'img/pdf.svg' %}" width="25" height="25" alt="PDF">
-                                    {% elif '.doc' in archivo.nombre or '.docx' in archivo.nombre %}
+                                    {% elif '.doc' in archivo.direccion.url or '.docx' in archivo.direccion.url %}
                                         <img src="{% static 'img/docx.png' %}" width="25" height="25" alt="Documento">
-                                    {% elif '.xls' in archivo.nombre or '.xlsx' in archivo.nombre %}
+                                    {% elif '.xls' in archivo.direccion.url or '.xlsx' in archivo.direccion.url %}
                                         <img src="{% static 'img/xlsx.png' %}" width="25" height="25" alt="Excel">
                                     {% endif %}
                                 </div>
@@ -116,26 +116,100 @@
                         <td>{{archivo.creado_por.get_full_name}}</td>
                         <td>
                             <div class="flex justify-center">
-                                <label for="edit-{{archivo.pk}}" class="btn btn-sm btn-gray-600">
-                                    <img src="{% static 'img/edit.svg' %}" width="25" height="25" alt="Eliminar">
+                                <label for="edit-{{archivo.pk}}" class="btn btn-xs btn-gray-600">
+                                    <img src="{% static 'img/edit.svg' %}" width="15" height="15" alt="Eliminar">
                                 </label>
                                 <input type="checkbox" id="edit-{{archivo.pk}}" class="modal-toggle" />
                                 <div class="modal" id="edit-{{archivo.pk}}" role="dialog">
                                     <div class="modal-box p-5">
-                                        <h3 class="font-bold text-lg text-center">Actualización de Archivo</h3>
+                                        <h3 class="font-bold text-lg text-center">Actualización de Archivo '{{archivo.nombre}}'</h3>
                                         <hr>
-                                        <form action="" method="post">
+                                        <form action="" method="post" enctype="multipart/form-data">
                                             <div class="w-full">
                                                 {% csrf_token %}
+                                                <input type="hidden" name="archivo" value="1">
+                                                <input type="hidden" name="editar" value="{{archivo.pk}}">
+                                                
+                                                <label class="label">
+                                                    <span class="label-text">Archivo a Cargar:</span>
+                                                </label>
+
+                                                <input type="file" name="archivo-direccion" id="id_archivo-direccion-{{archivo.pk}}" class="input input-bordered w-full" accept=".pdf, .xls, .xlsx, .doc, .docx">
+
                                                 <div class="form-control w-full">
                                                     <label class="label">
                                                         <span class="label-text">Nombre del archivo</span>
                                                     </label>
-                                                    <input type="text" class="input input-bordered" name="archivo-nombre" value="{{archivo.nombre}}">
+                                                    <input type="text" class="input input-bordered w-full" id="id_archivo-nombre-{{archivo.pk}}" name="archivo-nombre" value="{{archivo.nombre}}" pattern="[^/]+" title="No se permite el caracter /" disabled>
                                                     <input type="text" name="editar" value="{{archivo.pk}}" hidden>
                                                 </div>
 
-                                                
+                                                <input type="checkbox" id="id_archivo-mantener_nombre-{{archivo.pk}}" name="archivo-mantener_nombre" class="checkbox checkbox-primary" checked="checked">
+                                                <label for="id_archivo-mantener_nombre-{{archivo.pk}}">Mantener el Nombre del Archivo</label>
+
+                                                <script>
+                                                    // Opcional: Asegurar que empiece deshabilitado al cargar la página
+                                                    if (!document.getElementById('id_archivo-direccion-{{archivo.pk}}').value) {
+                                                        document.getElementById('id_archivo-nombre-{{archivo.pk}}').disabled = true;
+                                                    }
+
+                                                    document.getElementById('id_archivo-direccion-{{archivo.pk}}').addEventListener('change', function() {
+                                                        const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+
+                                                        if (this.files && this.files.length > 0) {
+                                                            const file = this.files[0];
+
+                                                            // Check if file exceeds 10MB
+                                                            if (file.size > maxSize) {
+                                                                alert("El archivo seleccionado excede el tamaño máximo permitido de 10MB. Por favor, elija un archivo más pequeño.");
+                                                                
+                                                                // Reset the inputs
+                                                                this.value = ""; 
+                                                                document.getElementById('id_archivo-nombre-{{archivo.pk}}').value = "";
+                                                                document.getElementById('id_archivo-nombre-{{archivo.pk}}').disabled = true;
+                                                                return; // Exit the function
+                                                            }
+
+                                                            // If size is okay, enable field and set name
+                                                            document.getElementById('id_archivo-nombre-{{archivo.pk}}').disabled = true;
+                                                            document.getElementById('id_archivo-nombre-{{archivo.pk}}').value = file.name;
+                                                            checkbox.checked = true; // Aseguramos que el checkbox se marque
+                                                            
+                                                        } else {
+                                                            // If no file (or selection cancelled)
+                                                            document.getElementById('id_archivo-nombre-{{archivo.pk}}').disabled = true;
+                                                            document.getElementById('id_archivo-nombre-{{archivo.pk}}').value = "";
+                                                        }
+                                                    });
+
+                                                    function actualizarNombre() {
+                                                        // Si el checkbox está activo, deshabilitamos el campo
+                                                        if (document.getElementById('id_archivo-mantener_nombre-{{archivo.pk}}').checked) {
+                                                            document.getElementById('id_archivo-nombre-{{archivo.pk}}').disabled = true;
+                                                        } else {                                        
+                                                            document.getElementById('id_archivo-nombre-{{archivo.pk}}').disabled = false;
+                                                                                                
+                                                        }
+
+                                                        if (document.getElementById('id_archivo-direccion-{{archivo.pk}}').files.length > 0) {
+                                                            document.getElementById('id_archivo-nombre-{{archivo.pk}}').value = document.getElementById('id_archivo-direccion-{{archivo.pk}}').files[0].name;
+                                                        }
+                                                    }
+
+                                                    // Escuchar cuando cambian el checkbox
+                                                    document.getElementById('id_archivo-mantener_nombre-{{archivo.pk}}').addEventListener('change', actualizarNombre);
+
+                                                    // Escuchar cuando seleccionan un archivo nuevo
+                                                    document.getElementById('id_archivo-direccion-{{archivo.pk}}').addEventListener('change', function() {
+                                                        // Solo intentamos poner el nombre si el checkbox NO está activo
+                                                        if (!document.getElementById('id_archivo-mantener_nombre-{{archivo.pk}}').checked && this.files.length > 0) {
+                                                            document.getElementById('id_archivo-nombre-{{archivo.pk}}').value = this.files[0].name;
+                                                        }
+                                                    });
+
+                                                    // Ejecutar al cargar por si el navegador recordó estados previos
+                                                    actualizarNombre();
+                                                </script>                                                
                                             </div>
 
                                             <div class="modal-action flex justify-center">
@@ -143,7 +217,7 @@
                                             </div>
                                         </form>
                                     </div>
-                                    <label class="modal-backdrop" for="edit-{{carpeta.pk}}">Close</label>
+                                    <label class="modal-backdrop" for="edit-{{archivo.pk}}">Close</label>
                                 </div>
                                                         &nbsp;
                                 {% if request.user.is_superuser %}

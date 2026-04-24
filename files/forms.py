@@ -16,7 +16,7 @@ class CrearArchivoForm(forms.ModelForm):
         nombre = self.data.get('archivo-nombre')
         mantener_nombre = self.data.get('archivo-mantener_nombre')
 
-        print(self.files)
+        print(self.files, nombre, mantener_nombre, self.data)
 
         if not mantener_nombre:
             # Si no se mantiene el nombre, se puede modificar para evitar conflictos
