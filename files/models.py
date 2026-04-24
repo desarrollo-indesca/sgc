@@ -64,11 +64,14 @@ class Archivo(models.Model):
         root = settings.MEDIA_ROOT.__str__()
 
         if(self.seccion):
-            root = root + "/" + self.seccion.nombre.upper() + "/"
+            root = root + "/" + self.seccion.nombre.upper()
 
+        root = root + "/"
+            
         carpeta_path = ''
         if(self.carpeta):
             carpeta_path = self.carpeta.nombre.upper() + "/" + carpeta_path
+            print(carpeta_path)
 
         full_path = root + carpeta_path
 
