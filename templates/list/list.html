@@ -230,6 +230,22 @@
                                     </button>
                                 </form>
                                 {% endif %}
+
+                                <label for="history-{{archivo.pk}}" class="btn btn-xs btn-info">
+                                    <img src="{% static 'img/history.png' %}" width="15" height="15" alt="Historial">
+                                </label>
+
+                                <input type="checkbox" id="history-{{archivo.pk}}" class="modal-toggle" />
+                                <div class="modal" id="history-{{archivo.pk}}" role="dialog">
+                                    
+                                    <div class="modal-box p-5 w-11/12 max-w-5xl">
+                                        <h3 class="font-bold text-lg text-center">Historial de Versiones</h3>
+                                        <hr>
+
+                                        <div hx-get="{% url 'versiones_archivo' archivo.pk %}" hx-trigger="intersect"></div>
+                                    </div>
+                                    <label class="modal-backdrop" for="history-{{archivo.pk}}">Close</label>
+                                </div>
                             </div>
                         </td>
                     </tr>

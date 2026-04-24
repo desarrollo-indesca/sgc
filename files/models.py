@@ -88,7 +88,7 @@ class Registro(models.Model):
     carpeta = models.ForeignKey(Carpeta, on_delete=models.CASCADE, related_name='registros', null=True, blank=True)
     seccion = models.ForeignKey(Seccion, on_delete=models.CASCADE, related_name='registros', null=True, blank=True)
     fecha = models.DateTimeField(auto_now_add=True)
-    accion = models.CharField(max_length=1) # 'C' Creación, 'M' Modificación, 'E' Eliminación
+    accion = models.CharField(max_length=1, choices=[('C', 'Creación'), ('U', 'Modificación'), ('E', 'Eliminación')]) # 'C' Creación, 'U' Modificación, 'E' Eliminación
     usuario = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     descripcion = models.TextField(null=True, blank=True)
 

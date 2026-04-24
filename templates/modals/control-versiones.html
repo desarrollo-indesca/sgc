@@ -1,0 +1,50 @@
+<table class="table-xs w-full border-cullapse border border-gray-300 w-full">
+    <thead>
+        <tr class="bg-gray-200">
+            <th>Archivo</th>
+            <th>Fecha</th>
+            <th>Usuario</th>
+            <th>Logs</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="border bg-green-100">
+            <td><a href="{{ archivo.direccion.url }}" target="_blank" class="hover:underline pointer">{{ archivo.nombre }}</a></td>
+            <td>{{ archivo.fecha_de_carga }}</td>
+            <td>{{ archivo.creado_por.get_full_name }}</td>
+            <td>
+                <ul class="list-disc list-inside text-justify">
+                {% for log in archivo.registros.all %}
+                    <li>
+                        <strong>{{ log.get_accion_display }}</strong>: 
+                        {{ log.descripcion }} 
+                        <span class="text-muted">({{ log.fecha }})</span>
+                    </li>
+                {% empty %}
+                    <li>Sin registros de actividad.</li>
+                {% endfor %}
+                </ul>
+            </td>
+        </tr>
+        {% for version in versiones %}
+        <tr class="border">
+            <td><a href="{{ version.direccion.url }}" target="_blank" class="hover:underline pointer">{{ version.nombre }}</a></td>
+            <td>{{ version.fecha_de_carga }}</td>
+            <td>{{ version.creado_por.get_full_name }}</td>
+            <td>
+                <ul class="list-disc list-inside text-justify">
+                {% for log in version.registros.all %}
+                    <li>
+                        <strong>{{ log.get_accion_display }}</strong>: 
+                        {{ log.descripcion }} 
+                        <span class="text-muted">({{ log.fecha }})</span>
+                    </li>
+                {% empty %}
+                    <li>Sin registros de actividad.</li>
+                {% endfor %}
+                </ul>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

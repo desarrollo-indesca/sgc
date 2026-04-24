@@ -100,18 +100,30 @@ class SeccionCarpetaListView(LoginRequiredMixin, View):
                             archivo = Archivo.objects.get(pk=editar)
                             name_old = archivo.nombre
 
-                            form_archivo = CrearArchivoForm(request.POST, request.FILES, instance=archivo, prefix='archivo')
+                            form_archivo = CrearArchivoForm(request.POST, request.FILES, prefix='archivo')
                             
                             try:
+                                    form_archivo.instance.seccion = Seccion.objects.get(pk=seccion)
                                     form_archivo.save()
+                                    archivo.version_siguiente = form_archivo.instance
+                                    archivo.estado = "R"
+                                    archivo.save()
+
                                     Registro.objects.create(
                                         archivo = archivo,
                                         accion = "U",
                                         usuario = request.user,
-                                        descripcion = f"Edición del archivo {name_old} a {archivo.nombre} en la carpeta {archivo.carpeta.ruta() if archivo.carpeta else 'Raíz de la sección ' + str(archivo.seccion)}",
-                                    )              
+                                        descripcion = f"Actualización del archivo {name_old} a {archivo.nombre} en la carpeta {archivo.carpeta.ruta() if archivo.carpeta else 'Raíz de la sección ' + str(archivo.seccion)}",
+                                    ) 
 
-                                    messages.success(request, 'Archivo editado.')
+                                    Registro.objects.create(
+                                        archivo = form_archivo.instance,
+                                        accion = "C",
+                                        usuario = request.user,
+                                        descripcion = f"Creación del archivo {form_archivo.instance.nombre} en la sección {form_archivo.instance.seccion}; versión nueva de {name_old} en la carpeta {archivo.carpeta.ruta() if archivo.carpeta else 'Raíz de la sección ' + str(archivo.seccion)}",
+                                    )             
+
+                                    messages.success(request, 'Archivo actualizado.')
                                     return redirect(f'/list/{seccion}/')
                             except Exception as ex:
                                 messages.error(request, f'Error al editar el archivo: {str(ex)}')
@@ -268,4 +280,23 @@ class CarpetaListView(LoginRequiredMixin, View):
             'form_carpeta': CrearCarpetaForm(prefix='carpeta'),
             'form_archivo': CrearArchivoForm(prefix='archivo'),
             'ruta_carpeta': carpeta_padre.ruta_lista(),
+        })
+
+class VersionesArchivoView(LoginRequiredMixin, View):
+    def get(self, request, archivo):
+        archivo_obj = get_object_or_404(Archivo, pk=archivo)
+        versiones = []
+
+        archivo = archivo_obj
+        while archivo:
+            archivo = Archivo.objects.filter(version_siguiente=archivo).first()
+
+            if archivo:
+                versiones.append(archivo)
+
+        versiones.reverse()
+
+        return render(request, 'modals/control-versiones.html', {
+            'archivo': archivo_obj,
+            'versiones': versiones,
         })
