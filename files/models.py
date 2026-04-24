@@ -111,3 +111,6 @@ class Registro(models.Model):
 
     def __str__(self):
         return f"Cambio en {self.archivo.nombre if self.archivo else self.carpeta.nombre} por {self.usuario} el {self.fecha}"
+    
+    class Meta:
+        ordering = ['-fecha']

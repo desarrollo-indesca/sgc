@@ -12,4 +12,5 @@ urlpatterns = [
     path('versiones/<int:archivo>/', VersionesArchivoView.as_view(), name='versiones_archivo'),
     path('versiones/carpetas/<int:carpeta>/', VersionesCarpetasView.as_view(), name='versiones_carpetas'),
     path('busqueda/', BusquedaView.as_view(), name='busqueda'),
+    path('registros/', RegistroCambiosView.as_view(), name='registro_cambios'),
 ]

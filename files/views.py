@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views import View
+from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import authenticate, login, logout
 from functools import reduce
@@ -541,3 +542,9 @@ class VersionesCarpetasView(LoginRequiredMixin, View):
             'carpeta': carpeta_obj,
             'versiones': carpeta_obj.registros.all(),
         })
+
+class RegistroCambiosView(LoginRequiredMixin, ListView):
+    # paginate_by = 10
+    template_name = 'list/list_registros.html'
+    context_object_name = 'registros'
+    model = Registro
