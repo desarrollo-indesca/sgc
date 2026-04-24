@@ -90,6 +90,22 @@
                                 </form>
                                 {% endif %}
                                 {% endif %}
+
+                                <label for="history-folder-{{carpeta.pk}}" class="btn btn-xs btn-info">
+                                    <img src="{% static 'img/history.png' %}" width="15" height="15" alt="Historial">
+                                </label>
+
+                                <input type="checkbox" id="history-folder-{{carpeta.pk}}" class="modal-toggle" />
+                                <div class="modal" id="history-folder-{{carpeta.pk}}" role="dialog">
+                                    
+                                    <div class="modal-box p-5 w-11/12 max-w-5xl">
+                                        <h3 class="font-bold text-lg text-center">Registro de Cambios a la Carpeta</h3>
+                                        <hr>
+
+                                        <div hx-get="{% url 'versiones_carpetas' carpeta.pk %}" hx-trigger="intersect"></div>
+                                    </div>
+                                    <label class="modal-backdrop" for="history-folder-{{carpeta.pk}}">Close</label>
+                                </div>
                             </div>
                         </td>
                     </tr>

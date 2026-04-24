@@ -1,0 +1,24 @@
+<table class="table-xs w-full border-cullapse border border-gray-300 w-full">
+    <thead>
+        <tr class="bg-gray-200">
+            <th>Fecha</th>
+            <th>Usuario</th>
+            <th>Tipo</th>
+            <th>Registro</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for version in versiones %}
+        <tr class="border">
+            <td>{{ version.fecha }}</td>
+            <td>{{ version.usuario.get_full_name }}</td>
+            <td>
+                {{version.get_accion_display }}
+            </td>
+            <td>
+                {{ version.descripcion }}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

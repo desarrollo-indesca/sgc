@@ -10,4 +10,5 @@ urlpatterns = [
     path('list/<int:seccion>/', SeccionCarpetaListView.as_view(), name='list_files'),
     path('list/<int:seccion>/carpetas/<str:carpeta>/', CarpetaListView.as_view(), name='list_files_carpeta'),
     path('versiones/<int:archivo>/', VersionesArchivoView.as_view(), name='versiones_archivo'),
+    path('versiones/carpetas/<int:carpeta>/', VersionesCarpetasView.as_view(), name='versiones_carpetas'),
 ]

@@ -300,3 +300,14 @@ class VersionesArchivoView(LoginRequiredMixin, View):
             'archivo': archivo_obj,
             'versiones': versiones,
         })
+
+class VersionesCarpetasView(LoginRequiredMixin, View):
+    def get(self, request, carpeta):
+        carpeta_obj = get_object_or_404(Carpeta, pk=carpeta)
+
+        print(carpeta_obj.registros.all())
+
+        return render(request, 'modals/control-versiones-carpetas.html', {
+            'carpeta': carpeta_obj,
+            'versiones': carpeta_obj.registros.all(),
+        })
