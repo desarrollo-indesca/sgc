@@ -132,6 +132,7 @@
                         <td>{{archivo.creado_por.get_full_name}}</td>
                         <td>
                             <div class="flex justify-center">
+                                {% if request.user.is_superuser %}
                                 <label for="edit-{{archivo.pk}}" class="btn btn-xs btn-gray-600">
                                     <img src="{% static 'img/edit.svg' %}" width="15" height="15" alt="Eliminar">
                                 </label>
@@ -236,7 +237,7 @@
                                     <label class="modal-backdrop" for="edit-{{archivo.pk}}">Close</label>
                                 </div>
                                                         &nbsp;
-                                {% if request.user.is_superuser %}
+                                
                                 <form action="" method="post" onsubmit="return confirm('¿Desea eliminar este archivo? Quedará eliminado permanentemente.')">
                                     {% csrf_token %}
                                     <input type="text" name="archivo" value="1" hidden>

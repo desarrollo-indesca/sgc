@@ -42,7 +42,7 @@
       {% endif %}
   </div>
 
-  {% if request.user.is_superuser and request.path != '/list/' %}
+  {% if request.path != '/list/' %}
   <div class="navbar-second-row flex items-center justify-between">
     
       <div class="navbar-links flex items-center space-x-8 p-1">
