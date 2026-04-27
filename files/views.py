@@ -544,7 +544,7 @@ class VersionesCarpetasView(LoginRequiredMixin, View):
         })
 
 class RegistroCambiosView(LoginRequiredMixin, ListView):
-    # paginate_by = 10
+    paginate_by = 10
     template_name = 'list/list_registros.html'
     context_object_name = 'registros'
     model = Registro

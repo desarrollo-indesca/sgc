@@ -25,12 +25,34 @@
             </thead>
             <tbody>
                 {% for registro in registros %}
-                    <tr class="hover:bg-gray-100 text-center border">
+                    <tr class="hover:bg-gray-100 text-center border info-row">
                         <th>{{ registro.pk }}</th>
-                        <td>{{ registro.get_accion_display }}</td>
+                        <td>{{ registro.get_accion_display }} de {% if registro.archivo %}Archivo{% else %}Carpeta{% endif %}</td>
                         <td>{{ registro.usuario.get_full_name }}</td>
                         <td>{{ registro.fecha }}</td>
-                        <td>{{ registro.carpeta|default:registro.archivo }}</td>
+                        <td>
+                            {{ registro.carpeta|default:registro.archivo }} <br>
+
+                            {% if registro.carpeta and registro.carpeta.activo or registro.archivo and registro.archivo.estado != "E" %}
+                            <small>(
+                                {% if registro.carpeta %}
+                                    {% for carpeta in registro.carpeta.ruta_lista %} <a href="{% url 'list_files_carpeta' seccion=carpeta.seccion_padre.pk carpeta=carpeta.ruta %}">{{carpeta}}</a> /{% endfor %}
+                                {% else %}
+                                    {% if registro.archivo.carpeta %}
+                                     <a href="{% url 'list_files' seccion=registro.archivo.seccion_padre.pk %}">{{registro.archivo.seccion_padre}}</a> /
+                                     {% for carpeta in registro.archivo.carpeta.ruta_lista %} <a href="{% url 'list_files_carpeta' seccion=carpeta.seccion_padre.pk carpeta=carpeta.ruta %}">{{carpeta}}</a> /{% endfor %}
+                                    {% else %}
+                                    <a href="{% url 'list_files' seccion=registro.archivo.seccion_padre.pk %}">{{registro.archivo.seccion_padre}}</a>
+                                    {% endif %}
+                                {% endif %}    
+                            )</small>
+                            {% else %}
+                            <small>(
+                                {{registro.archivo.seccion_padre}}
+                            )</small>
+                            {% endif %}
+
+                        </td>
                         <td>{{ registro.descripcion }}</td>
                     </tr>
                 {% empty %}
@@ -38,6 +60,10 @@
                         <td colspan="5" class="text-center">No se encontraron registros.</td>
                     </tr>
                 {% endfor %}
+                {% if page_obj.has_next %}
+                    <tr class="info-row" hx-get="{% url 'registro_cambios' %}?page={{ page_obj.next_page_number }}" hx-trigger="intersect" hx-select=".info-row" hx-swap="outerHTML">
+                    </tr>
+                {% endif %}
             </tbody>
         </table>
     </div>
