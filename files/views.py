@@ -9,6 +9,7 @@ from django.contrib import messages
 from django.db import transaction
 from django.db.models import Q
 
+from .filters import RegistroFilter
 from .models import Seccion, Archivo, Carpeta, Registro
 from .forms import *
 
@@ -548,3 +549,11 @@ class RegistroCambiosView(LoginRequiredMixin, ListView):
     template_name = 'list/list_registros.html'
     context_object_name = 'registros'
     model = Registro
+
+    def get_queryset(self):
+        return RegistroFilter(self.request.GET, queryset=super().get_queryset()).qs
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['filter'] = RegistroFilter(self.request.GET, queryset=self.get_queryset())
+        return ctx

@@ -12,6 +12,38 @@
 
         <hr>
 
+        <div class="flex justify-between items-center mb-3 card">
+
+            <form method="get" class="flex flex-wrap items-end gap-4 p-4 bg-base-100 rounded-lg shadow-sm">
+                <div class="flex flex-col gap-1">
+                    <label for="{{ filter.form.fecha_inicio.id_for_label }}" class="text-sm font-medium">Fecha de Inicio:</label>
+                    {% render_field filter.form.fecha_inicio class="input input-bordered w-full" type="date" %}
+                </div>
+
+                <div class="flex flex-col gap-1">
+                    <label for="{{ filter.form.fecha_fin.id_for_label }}" class="text-sm font-medium">Fecha de Fin:</label>
+                    {% render_field filter.form.fecha_fin class="input input-bordered w-full" type="date" %}
+                </div>
+
+                <div class="flex flex-col gap-1">
+                    <label for="{{ filter.form.usuario.id_for_label }}" class="text-sm font-medium">Usuario:</label>
+                    {% render_field filter.form.usuario class="input input-bordered w-full" %}
+                </div>
+
+                <div class="flex flex-col gap-1">
+                    <label for="{{ filter.form.accion.id_for_label }}" class="text-sm font-medium">Acción:</label>
+                    {% render_field filter.form.accion class="select select-bordered w-full" %}
+                </div>
+
+                <div class="pb-1"> 
+                    <button type="submit" class="btn btn-error btn-xs">
+                        Filtrar
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
         <table class="table-xs w-full border-collapse border border-gray-300">
             <thead class="bg-gray-900 text-white">
                 <tr>
@@ -57,11 +89,11 @@
                     </tr>
                 {% empty %}
                     <tr>
-                        <td colspan="5" class="text-center">No se encontraron registros.</td>
+                        <td colspan="6" class="text-center">No se encontraron registros.</td>
                     </tr>
                 {% endfor %}
                 {% if page_obj.has_next %}
-                    <tr class="info-row" hx-get="{% url 'registro_cambios' %}?page={{ page_obj.next_page_number }}" hx-trigger="intersect" hx-select=".info-row" hx-swap="outerHTML">
+                    <tr class="info-row" hx-get="{% url 'registro_cambios' %}?page={{ page_obj.next_page_number }}&{% for x in filter.form %}{{ x.name }}={{ x.value }}&{% endfor %}" hx-trigger="intersect" hx-select=".info-row" hx-swap="outerHTML">
                     </tr>
                 {% endif %}
             </tbody>
