@@ -160,8 +160,8 @@ class SeccionCarpetaListView(LoginRequiredMixin, View):
                         messages.success(request, 'Archivo creado.')
                         return redirect(f'/list/{seccion}/')
                     elif(eliminar):
-                        carpeta = Archivo.objects.get(pk=eliminar)
-                        archivo.activo = False
+                        carpeta = Carpeta.objects.get(pk=eliminar)
+                        carpeta.activo = False
                         carpeta.save()
 
                         Registro.objects.create(
@@ -393,7 +393,7 @@ class CarpetaListView(LoginRequiredMixin, View):
                         return redirect(f'/list/{seccion}/carpetas/{carpeta.ruta()}')
                     elif(eliminar):
                         carpeta = Archivo.objects.get(pk=eliminar)
-                        archivo.activo = False
+                        carpeta.activo = False
                         carpeta.save()
 
                         Registro.objects.create(
