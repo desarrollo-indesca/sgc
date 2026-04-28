@@ -91,10 +91,10 @@ class Archivo(models.Model):
 
         filename = self.direccion.name
         
-        filename = ''.join(c for c in filename if c in "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789" or c in (' ', '-', '.'))
-        
         uid = uuid.uuid4().hex
         filename = f"{full_path}/{uid}-{filename}"
+
+        filename = ''.join(c for c in filename if c in "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789" or c in (' ', '-', '.', '/')).strip()
         
         return filename
     
