@@ -1,4 +1,6 @@
+import os
 import uuid
+from django.utils.text import slugify
 
 from django.db import models
 from django.conf import settings
@@ -75,26 +77,29 @@ class Archivo(models.Model):
             return self.seccion
 
     def upload(self, *args, **kwargs):
-        root = ''
+        # 1. Obtener los nombres de las carpetas o strings vacíos
+        seccion_nom = self.seccion.nombre if self.seccion else ""
+        carpeta_nom = self.carpeta.nombre if self.carpeta else ""
 
-        if(self.seccion):
-            root = self.seccion.nombre.upper() + "/"
-            
-        carpeta_path = ''
-        if(self.carpeta):
-            carpeta_path = self.carpeta.nombre.upper() + "/" + carpeta_path
-            print(carpeta_path)
+        # 2. Limpiar nombres (quitar tildes, espacios y caracteres raros)
+        # slugify convierte "GESTIÓN HUMANA" en "gestion-humana"
+        root = slugify(seccion_nom).replace("-", "_").upper()
+        sub_carpeta = slugify(carpeta_nom).replace("-", "_").upper()
 
-        full_path = root + carpeta_path
-
-        filename = self.direccion.name
-        
+        # 3. Preparar el nombre del archivo
+        # Tomamos solo el nombre base para evitar que traiga rutas previas
+        original_name = os.path.basename(self.direccion.name)
         uid = uuid.uuid4().hex
-        filename = f"{full_path}/{uid}-{filename}"
+        nuevo_filename = f"{uid}-{original_name}"
+        
+        # 4. UNIR TODO CON os.path.join (La parte más importante)
+        # Esto evita barras dobles // y asegura que la ruta sea válida para el SO
+        # Filtramos strings vacíos para que no cree carpetas "fantasmas"
+        partes_ruta = [p for p in [root, sub_carpeta, nuevo_filename] if p]
+        full_path = os.path.join(*partes_ruta)
 
-        filename = ''.join(c for c in filename if c in "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789" or c in (' ', '-', '.', '/')).strip().replace('//', '/').replace(" ", "_")
-
-        return filename
+        # 5. Limpieza final de seguridad (Garantiza que no empiece con /)
+        return full_path.lstrip('/')
     
     direccion = models.FileField(upload_to=upload)
 
