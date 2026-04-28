@@ -94,7 +94,7 @@ class Archivo(models.Model):
         uid = uuid.uuid4().hex
         filename = f"{full_path}/{uid}-{filename}"
 
-        filename = ''.join(c for c in filename if c in "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789" or c in (' ', '-', '.', '/')).strip().replace('//', '/')
+        filename = ''.join(c for c in filename if c in "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789" or c in (' ', '-', '.', '/')).strip().replace('//', '/').replace(" ", "_")
         
         return filename
     
