@@ -95,7 +95,8 @@ class Archivo(models.Model):
         filename = f"{full_path}/{uid}-{filename}"
 
         filename = ''.join(c for c in filename if c in "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789" or c in (' ', '-', '.', '/')).strip().replace('//', '/').replace(" ", "_")
-        
+        filename = filename[1:]
+
         return filename
     
     direccion = models.FileField(upload_to=upload)
