@@ -78,9 +78,7 @@ class Archivo(models.Model):
         root = ''
 
         if(self.seccion):
-            root = root + "/" + self.seccion.nombre.upper()
-
-        root = root + "/"
+            root = self.seccion.nombre.upper() + "/"
             
         carpeta_path = ''
         if(self.carpeta):
@@ -95,7 +93,6 @@ class Archivo(models.Model):
         filename = f"{full_path}/{uid}-{filename}"
 
         filename = ''.join(c for c in filename if c in "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789" or c in (' ', '-', '.', '/')).strip().replace('//', '/').replace(" ", "_")
-        filename = filename[1:]
 
         return filename
     
