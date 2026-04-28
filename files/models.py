@@ -75,7 +75,7 @@ class Archivo(models.Model):
             return self.seccion
 
     def upload(self, *args, **kwargs):
-        root = settings.MEDIA_ROOT.__str__()
+        root = ''
 
         if(self.seccion):
             root = root + "/" + self.seccion.nombre.upper()
