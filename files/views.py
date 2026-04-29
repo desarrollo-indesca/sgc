@@ -339,7 +339,7 @@ class CarpetaListView(LoginRequiredMixin, View):
                             )
 
                             messages.success(request, 'Archivo eliminado. Solo podrá visualizarse o restaurarse los registros de cambios.')
-                            return redirect(f'/list/{seccion}/carpetas/{carpeta}/')
+                            return redirect(f'/list/{seccion}/carpetas/{carpeta.ruta()}/')
                         elif(editar):
                             print("Editar")
                             archivo = Archivo.objects.get(pk=editar)
