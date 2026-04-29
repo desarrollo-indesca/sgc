@@ -398,7 +398,8 @@ class CarpetaListView(LoginRequiredMixin, View):
                         messages.success(request, 'Archivo creado.')
                         return redirect(f'/list/{seccion}/carpetas/{carpeta.ruta()}')
                     elif(eliminar):
-                        carpeta = Archivo.objects.get(pk=eliminar)
+                        carpeta = Carpeta.objects.get(pk=eliminar)
+                        ruta_anterior = "".join(carpeta.ruta().split('/')[:-1])
                         carpeta.activo = False
                         carpeta.save()
 
