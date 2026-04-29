@@ -46,11 +46,11 @@
                         <td>{{carpeta.creado_por.get_full_name}}</td>
                         <td>                            
                             <div class="flex justify-center">
-                                <a href="{% url 'list_files_carpeta' seccion=seccion.pk carpeta=carpeta.ruta %}" class="btn btn-xs btn-primary mr-2">
+                                <a href="{% url 'list_files_carpeta' seccion=seccion.pk carpeta=carpeta.ruta %}" class="btn btn-xs text-white mr-2" style="background-color: black !important;">
                                     Ir a la dirección
                                 </a>
 
-                                <label for="history-folder-{{carpeta.pk}}" class="btn btn-xs btn-info">
+                                <label for="history-folder-{{carpeta.pk}}" class="btn btn-xs" style="background-color: gray;">
                                     <img src="{% static 'img/history.png' %}" width="15" height="15" alt="Historial">
                                 </label>
 
@@ -92,12 +92,11 @@
                         <td>{{archivo.fecha_de_carga}}</td>
                         <td>{{archivo.creado_por.get_full_name}}</td>
                         <td>
-                            <a href="{% if archivo.carpeta %}{% url 'list_files_carpeta' seccion=archivo.seccion_padre.pk carpeta=archivo.carpeta.ruta %}{% else %}{% url 'list_files' seccion=archivo.seccion_padre.pk %}{% endif %}" class="btn btn-xs btn-primary mr-2">
-                                Ir a la dirección
-                            </a>
-
                             <div class="flex justify-center">
-                                <label for="history-{{archivo.pk}}" class="btn btn-xs btn-info">
+                                <a href="{% if archivo.carpeta %}{% url 'list_files_carpeta' seccion=archivo.seccion_padre.pk carpeta=archivo.carpeta.ruta %}{% else %}{% url 'list_files' seccion=archivo.seccion_padre.pk %}{% endif %}" class="btn btn-xs border text-white mr-2" style="background-color: black;">
+                                    Ir a la dirección
+                                </a>
+                                <label for="history-{{archivo.pk}}" class="btn btn-xs" style="background-color: gray;">
                                     <img src="{% static 'img/history.png' %}" width="15" height="15" alt="Historial">
                                 </label>
 

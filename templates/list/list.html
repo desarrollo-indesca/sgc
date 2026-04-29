@@ -91,7 +91,7 @@
                                 {% endif %}
                                 {% endif %}
 
-                                <label for="history-folder-{{carpeta.pk}}" class="btn btn-xs btn-info">
+                                <label for="history-folder-{{carpeta.pk}}" class="btn btn-xs" style="background-color: gray;">
                                     <img src="{% static 'img/history.png' %}" width="15" height="15" alt="Historial">
                                 </label>
 
@@ -161,7 +161,7 @@
                                                     <input type="text" name="editar" value="{{archivo.pk}}" hidden>
                                                 </div>
 
-                                                <input type="checkbox" id="id_archivo-mantener_nombre-{{archivo.pk}}" name="archivo-mantener_nombre" class="checkbox checkbox-primary" checked="checked">
+                                                <input type="checkbox" id="id_archivo-mantener_nombre-{{archivo.pk}}" name="archivo-mantener_nombre" class="checkbox checkbox-danger" checked="checked">
                                                 <label for="id_archivo-mantener_nombre-{{archivo.pk}}">Mantener el Nombre del Archivo</label>
 
                                                 <script>
@@ -248,7 +248,7 @@
                                 </form>
                                 {% endif %}
 
-                                <label for="history-{{archivo.pk}}" class="btn btn-xs btn-info">
+                                <label for="history-{{archivo.pk}}" class="btn btn-xs" style="background-color: gray;">
                                     <img src="{% static 'img/history.png' %}" width="15" height="15" alt="Historial">
                                 </label>
 
