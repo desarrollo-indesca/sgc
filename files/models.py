@@ -1,6 +1,7 @@
 import os
 import uuid
 from django.utils.text import slugify
+from django.utils.encoding import smart_str
 
 from django.db import models
 from django.conf import settings
@@ -95,7 +96,7 @@ class Archivo(models.Model):
         # 4. UNIR TODO CON os.path.join (La parte más importante)
         # Esto evita barras dobles // y asegura que la ruta sea válida para el SO
         # Filtramos strings vacíos para que no cree carpetas "fantasmas"
-        partes_ruta = [p for p in [root, sub_carpeta, nuevo_filename] if p]
+        partes_ruta = [smart_str(p) for p in [root, sub_carpeta, nuevo_filename] if p]
         full_path = os.path.join(*partes_ruta)
 
         # 5. Limpieza final de seguridad (Garantiza que no empiece con /)

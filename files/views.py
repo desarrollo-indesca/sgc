@@ -3,6 +3,7 @@ from django.views import View
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import authenticate, login, logout
+from django.utils.encoding import smart_str
 from functools import reduce
 import operator
 from django.contrib import messages
