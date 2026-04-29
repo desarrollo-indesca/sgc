@@ -8,6 +8,7 @@ import operator
 from django.contrib import messages
 from django.db import transaction
 from django.db.models import Q
+from django.http import Http404
 
 from .filters import RegistroFilter
 from .models import Seccion, Archivo, Carpeta, Registro
@@ -83,7 +84,6 @@ class SeccionCarpetaListView(LoginRequiredMixin, View):
 
                 with transaction.atomic():
                     if(archivo):
-                        print("Archivo")
                         if(eliminar):
                             print("Eliminar")
                             archivo = Archivo.objects.get(pk=eliminar)
@@ -194,7 +194,6 @@ class SeccionCarpetaListView(LoginRequiredMixin, View):
                             messages.error(request, f'Error al crear la carpeta: {str(ex)}')
                             return redirect(f'/list/{seccion}/')
 
-
                     if(nombre_carpeta and not editar):
                         form_carpeta = CrearCarpetaForm(request.POST, prefix='carpeta')
                         
@@ -258,21 +257,30 @@ class CarpetaListView(LoginRequiredMixin, View):
     def obtener_carpeta(self, seccion, carpeta):
         direcciones = carpeta.split('/')
     
-        carpeta_padre = get_object_or_404(
-            Carpeta, 
+        # Instead of get_object_or_404, use .filter().first()
+        carpeta_padre = Carpeta.objects.filter(
             seccion__pk=seccion, 
             nombre=direcciones[0], 
-            activo=True
-        )
+            activo=True,
+            carpeta__isnull=True # Assumes root folders have no parent
+        ).first()
+
+        if not carpeta_padre:
+            print("Carpeta raíz no encontrada:", direcciones[0], "en la sección", seccion)
+            raise Http404
+        
+        print("Carpeta raíz encontrada:", carpeta_padre)
 
         for i in range(1, len(direcciones)):
-            carpeta_padre = get_object_or_404(
-                Carpeta, 
-                seccion__pk=seccion, 
+            carpeta_padre = Carpeta.objects.filter(
                 carpeta=carpeta_padre, 
                 nombre=direcciones[i], 
                 activo=True
-            )
+            ).first()
+            
+            if not carpeta_padre:
+                print("Carpeta no encontrada:", direcciones[i], "en la ruta", "/".join(direcciones[:i]), "en la sección", seccion)
+                raise Http404
 
         return carpeta_padre
 
@@ -290,7 +298,6 @@ class CarpetaListView(LoginRequiredMixin, View):
         for i in range(1, len(direcciones)):
             carpeta_padre = get_object_or_404(
                 Carpeta, 
-                seccion__pk=seccion, 
                 carpeta=carpeta_padre, 
                 nombre=direcciones[i], 
                 activo=True
@@ -309,6 +316,7 @@ class CarpetaListView(LoginRequiredMixin, View):
 
     def post(self, request, seccion, carpeta):
         carpeta = self.obtener_carpeta(seccion, carpeta)
+        print("Carpeta encontrada para POST:", carpeta)
         if(request.user.is_superuser):
                 archivo = request.POST.get('archivo')
                 nombre_carpeta = request.POST.get('carpeta-nombre')
@@ -370,24 +378,21 @@ class CarpetaListView(LoginRequiredMixin, View):
                         for file in files:
                             form_archivo = CrearArchivoForm(request.POST, {'archivo-direccion': file}, prefix='archivo')
                         
-                            try:
+                            with transaction.atomic():
                                 if form_archivo.is_valid():
                                         form_archivo.instance.carpeta = carpeta
-                                        form_archivo.instance.save()
+                                        form_archivo.save()
 
                                         Registro.objects.create(
                                             archivo = form_archivo.instance,
                                             accion = "C",
                                             usuario = request.user,
-                                            descripcion = f"Creación del archivo '{form_archivo.instance.nombre}' en la ruta '{form_archivo.instance.carpeta.ruta()}'.",
+                                            descripcion = f"Creación del archivo '{form_archivo.instance.nombre}' en la ruta '{carpeta.ruta()}'.",
                                         )
                                 else:
                                         messages.error(request, f'Error al crear el archivo: {form_archivo.errors}')
                                         print(form_archivo.errors)
                                         return redirect(f'/list/{seccion}/carpetas/{carpeta.ruta()}')
-                            except Exception as ex:
-                                messages.error(request, f'Error al crear el archivo: {str(ex)}')
-                                return redirect(f'/list/{seccion}/')
                     
                         messages.success(request, 'Archivo creado.')
                         return redirect(f'/list/{seccion}/carpetas/{carpeta.ruta()}')
@@ -431,7 +436,7 @@ class CarpetaListView(LoginRequiredMixin, View):
                         
                         try:
                             if form_carpeta.is_valid():
-                                    form_carpeta.instance.seccion = Seccion.objects.get(pk=seccion)
+                                    form_carpeta.instance.carpeta = carpeta
                                     form_carpeta.save()
 
                                     Registro.objects.create(
