@@ -78,28 +78,32 @@ class Archivo(models.Model):
             return self.seccion
 
     def upload(self, *args, **kwargs):
-        # 1. Obtener los nombres de las carpetas o strings vacíos
+        # 1. Get names safely
         seccion_nom = self.seccion.nombre if self.seccion else ""
         carpeta_nom = self.carpeta.nombre if self.carpeta else ""
 
-        # 2. Limpiar nombres (quitar tildes, espacios y caracteres raros)
-        # slugify convierte "GESTIÓN HUMANA" en "gestion-humana"
+        # 2. Clean names (Slugify handles accents by removing them)
         root = slugify(seccion_nom).replace("-", "_").upper()
         sub_carpeta = slugify(carpeta_nom).replace("-", "_").upper()
 
-        # 3. Preparar el nombre del archivo
-        # Tomamos solo el nombre base para evitar que traiga rutas previas
+        # 3. Prepare the filename
+        # CRITICAL: We slugify the filename too, or at least ensure it's smart_str
         original_name = os.path.basename(self.direccion.name)
-        uid = uuid.uuid4().hex
-        nuevo_filename = f"{uid}-{original_name}"
         
-        # 4. UNIR TODO CON os.path.join (La parte más importante)
-        # Esto evita barras dobles // y asegura que la ruta sea válida para el SO
-        # Filtramos strings vacíos para que no cree carpetas "fantasmas"
+        # Optional: Slugify the filename to prevent 'ascii' errors in the filesystem
+        # If you want to keep the original name exactly as is, use smart_str
+        clean_name = smart_str(original_name)
+        
+        uid = uuid.uuid4().hex
+        nuevo_filename = f"{uid}-{clean_name}"
+        
+        # 4. Join parts
+        # Ensure every single part is a 'smart_str' (Unicode)
         partes_ruta = [smart_str(p) for p in [root, sub_carpeta, nuevo_filename] if p]
+        
+        # os.path.join works best with Unicode strings in Python 3
         full_path = os.path.join(*partes_ruta)
 
-        # 5. Limpieza final de seguridad (Garantiza que no empiece con /)
         return full_path.lstrip('/')
     
     direccion = models.FileField(upload_to=upload)
