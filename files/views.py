@@ -399,7 +399,7 @@ class CarpetaListView(LoginRequiredMixin, View):
                         return redirect(f'/list/{seccion}/carpetas/{carpeta.ruta()}')
                     elif(eliminar):
                         carpeta = Carpeta.objects.get(pk=eliminar)
-                        ruta_anterior = "".join(carpeta.ruta().split('/')[:-1])
+                        ruta_anterior = "/".join(carpeta.ruta().split('/')[:-1])
                         carpeta.activo = False
                         carpeta.save()
 
@@ -411,7 +411,7 @@ class CarpetaListView(LoginRequiredMixin, View):
                         )
 
                         messages.success(request, 'Carpeta eliminada.')
-                        return redirect(f'/list/{seccion}/carpetas/{carpeta.ruta()}')
+                        return redirect(f'/list/{seccion}/carpetas/{ruta_anterior}')
                     elif(editar):
                         carpeta = Carpeta.objects.get(pk=editar)
                         name_old = carpeta.nombre

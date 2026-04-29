@@ -29,7 +29,7 @@ class Carpeta(models.Model):
         return self.registros.get(accion='C').usuario if self.registros.filter(accion='C').exists() else None
     
     def carpeta_vacia(self):
-        return self.archivos.count() == 0 and self.carpetas.count() == 0
+        return self.archivos.filter(estado="P").count() == 0 and self.carpetas.filter(activo=True).count() == 0
     
     def ruta(self):
         if self.carpeta:
