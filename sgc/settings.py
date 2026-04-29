@@ -39,7 +39,7 @@ AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
 
 AUTH_LDAP_GROUP_TYPE = ActiveDirectoryGroupType(name_attr="cn")
 AUTH_LDAP_USER_FLAGS_BY_GROUP = {
-    "is_superuser": ["cn=sig,cn=users,dc=indesca,dc=local", "cn=Informática,ou=grupos,dc=indesca,dc=local"], # Usuarios con este grupo serán superusuarios
+    "is_superuser": ["cn=sig,ou=grupos,dc=indesca,dc=local", "cn=Informática,ou=grupos,dc=indesca,dc=local"], # Usuarios con este grupo serán superusuarios
 }
 AUTH_LDAP_FIND_GROUP_PERMS = True
 AUTH_LDAP_CACHE_GROUPS = True
