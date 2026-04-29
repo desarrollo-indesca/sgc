@@ -65,7 +65,7 @@
                                                 {% csrf_token %}
                                                 <div class="form-control w-full">
                                                     <label class="label">
-                                                        <span class="label-text">Nombre de</span>
+                                                        <span class="label-text">Nombre de la Carpeta</span>
                                                     </label>
                                                     <input type="text" class="input input-bordered" name="carpeta-nombre" value="{{carpeta.nombre}}">
                                                     <input type="text" name="editar" value="{{carpeta.pk}}" hidden>
@@ -133,11 +133,11 @@
                         <td>
                             <div class="flex justify-center">
                                 {% if request.user.is_superuser %}
-                                <label for="edit-{{archivo.pk}}" class="btn btn-xs btn-gray-600">
+                                <label for="edit-archivo-{{archivo.pk}}" class="btn btn-xs btn-gray-600">
                                     <img src="{% static 'img/edit.svg' %}" width="15" height="15" alt="Eliminar">
                                 </label>
-                                <input type="checkbox" id="edit-{{archivo.pk}}" class="modal-toggle" />
-                                <div class="modal" id="edit-{{archivo.pk}}" role="dialog">
+                                <input type="checkbox" id="edit-archivo-{{archivo.pk}}" class="modal-toggle" />
+                                <div class="modal" id="edit-archivo-{{archivo.pk}}" role="dialog">
                                     <div class="modal-box p-5">
                                         <h3 class="font-bold text-lg text-center">Actualización de Archivo '{{archivo.nombre}}'</h3>
                                         <hr>
