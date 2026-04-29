@@ -78,30 +78,28 @@ class Archivo(models.Model):
             return self.seccion
 
     def upload(self, *args, **kwargs):
-        # 1. Get names safely
+        # 1. Clean folder names
         seccion_nom = self.seccion.nombre if self.seccion else ""
         carpeta_nom = self.carpeta.nombre if self.carpeta else ""
 
-        # 2. Clean names (Slugify handles accents by removing them)
         root = slugify(seccion_nom).replace("-", "_").upper()
         sub_carpeta = slugify(carpeta_nom).replace("-", "_").upper()
 
-        # 3. Prepare the filename
-        # CRITICAL: We slugify the filename too, or at least ensure it's smart_str
-        original_name = os.path.basename(self.direccion.name)
+        # 2. Handle the filename SAFELY for Debian
+        original_full_name = os.path.basename(self.direccion.name)
+        name, extension = os.path.splitext(original_full_name)
         
-        # Optional: Slugify the filename to prevent 'ascii' errors in the filesystem
-        # If you want to keep the original name exactly as is, use smart_str
-        clean_name = smart_str(original_name)
-        
+        # We slugify the NAME but keep the extension
+        # This prevents 'ñ' or 'á' from ever reaching the filesystem
+        clean_name = slugify(name)
         uid = uuid.uuid4().hex
-        nuevo_filename = f"{uid}-{clean_name}"
         
-        # 4. Join parts
-        # Ensure every single part is a 'smart_str' (Unicode)
+        # If slugify returns an empty string (e.g. file was named "ñ.pdf") 
+        # we use the UID as the name
+        nuevo_filename = f"{uid}-{clean_name}{extension}" if clean_name else f"{uid}{extension}"
+
+        # 3. Join using smart_str to be safe
         partes_ruta = [smart_str(p) for p in [root, sub_carpeta, nuevo_filename] if p]
-        
-        # os.path.join works best with Unicode strings in Python 3
         full_path = os.path.join(*partes_ruta)
 
         return full_path.lstrip('/')
